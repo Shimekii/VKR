@@ -71,8 +71,9 @@ class window(QMainWindow, Ui_MainWindow):
         if files:
             if len(files) != 2:
                 QMessageBox.warning(self, "Ошибка", "Выберите 2 файла")
-            self.file1, self.file2 = files
-            self.compare_traces()
+            else:
+                self.file1, self.file2 = files
+                self.compare_traces()
 
     # сравнение трасс
     def compare_traces(self):
