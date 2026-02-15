@@ -8,7 +8,7 @@ class MplCanvas(FigureCanvas):
         super().__init__(self.fig)
 
 class CDFPlot(MplCanvas):
-    def plot(self, values1, cdf1, ks=None, ksx=None, values2 = None, cdf2 = None, label1='Трасса 1', label2='Трасса2'):
+    def plot(self, values1, cdf1, ks=None, ksx=None, values2 = None, cdf2 = None, label1='Трасса 1', label2='Трасса 2'):
         self.ax.clear()
 
         self.ax.step(values1, cdf1, where='post', label=label1)
@@ -17,7 +17,7 @@ class CDFPlot(MplCanvas):
 
         self.ax.set_xlabel("k")
         self.ax.set_ylabel("F(k)")
-        self.ax.set_title("Эмпирическая функция распределения N(T)")
+        #self.ax.set_title("Эмпирическая функция распределения N(T)")
         if ks is not None and ksx is not None:
             self.ax.axvline(ksx, color='black', linestyle="--", label=f"KS-distance = {ks:4f}")
         self.ax.legend()
