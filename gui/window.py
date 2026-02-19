@@ -310,7 +310,7 @@ def _run_search_process(args, queue):
 def searchTask(args):
     size, mean, cv, corr, skew, kurt, method, extra_params = args
 
-    [Q, Lambda, D], loss = method(
+    (Q, Lambda, D), loss = method(
         sizeMap=size,
         cvTarget=cv,
         corrTarget=corr,
