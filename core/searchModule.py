@@ -193,7 +193,7 @@ def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=
     #print("Всего итераций: ", sumIter)
     print("Минимальная ошибка:", best_fitness)
     #f.write(f"{cv}, {corr}, {sumIter}\n")
-    return best
+    return best, best_fitness
 
 """_____________________________________________________________________________________"""
 # Алгоритм с перебором параметров MAP-потока в заданной окрестности
@@ -249,7 +249,7 @@ def local_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=10, pe
         #print(f"\rИтерация: {iter}, Fit: {Fit}", end="")
     #print("\n", analysisModule.characteristics(best[0], best[1], best[2]))
     print(f"best fit: {best_fitness}")
-    return best
+    return best, best_fitness
 
 # Перебор элементов матриц Q и Lambda в окрестности
 """
