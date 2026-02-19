@@ -289,7 +289,7 @@ def sgd_optimization(sizeMap, cvTarget, corrTarget, skewnessTarget=None, kurtosi
     # Возвращаем финальные матрицы
     with torch.no_grad():
         Q_tensor, Lambda_tensor, D_tensor = build_matrices_from_params(Q_params, Lambda_params, D_params, sizeMap)
-        Q_final, Lambda_final, D_final = fromTensor(Q_tensor, Lambda_tensor, D_tensor,)
+        Q_final, Lambda_final, D_final = fromTensor(Q_tensor, Lambda_tensor, D_tensor)
     
     return (Q_final, Lambda_final, D_final), current_loss
 
