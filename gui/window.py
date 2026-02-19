@@ -106,6 +106,7 @@ class window(QMainWindow, Ui_MainWindow):
         self._dialogView.exec()
         self._dialogView = None
 
+    # перенос характеристик после чтения трассы
     def transfer(self):
         self.spinMean.setValue(self.characteristics[0])
         self.spinCV.setValue(self.characteristics[2])
@@ -278,7 +279,7 @@ class window(QMainWindow, Ui_MainWindow):
 
     def checkProcess(self):
         if not self.queue.empty():
-            Q, Lambda, D, R, characteristics = self.queue.get()
+            Q, Lambda, D, R, characteristics, loss = self.queue.get()
             self.process.join()
             self.processTimer.stop()
             self.progressSearch.setMaximum(1)
@@ -293,7 +294,8 @@ class window(QMainWindow, Ui_MainWindow):
                     corr=characteristics[3],
                     skew=characteristics[4],
                     kurt=characteristics[5],
-                    R=R.round(4)
+                    R=R.round(4),
+                    loss=loss
                 )
             )
             self.tmp_Q = Q
@@ -308,7 +310,7 @@ def _run_search_process(args, queue):
 def searchTask(args):
     size, mean, cv, corr, skew, kurt, method, extra_params = args
 
-    Q, Lambda, D = method(
+    [Q, Lambda, D], loss = method(
         sizeMap=size,
         cvTarget=cv,
         corrTarget=corr,
@@ -320,7 +322,7 @@ def searchTask(args):
     Q, Lambda, D = sm.meanMap([Q, Lambda, D], mean)
     R = am.compute_stationary_distribution(Q)
     characteristics = am.characteristics(Q, Lambda, D)
-    return Q, Lambda, D, R, characteristics
+    return Q, Lambda, D, R, characteristics, loss
 
 # чтение трассы с файла
 def read_trace(file_path):
@@ -384,6 +386,7 @@ METHODS = {
 }
 
 INFO_TEMPLATE="""Получившиеся числовые характеристики длин интервалов максимально возможно приближены к заданным
+Ошибка (MSE): {loss:.2e}
 
 Среднее: {mean:.4f}
 Дисперсия: {var:.4f}
