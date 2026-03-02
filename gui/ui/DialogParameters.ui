@@ -47,7 +47,7 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="pageBruteForce">
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -355,6 +355,13 @@
        </item>
       </layout>
      </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="lineWeights">
+     <property name="text">
+      <string>Введите веса для функции потерь. Пример 1,1,1,1</string>
+     </property>
     </widget>
    </item>
    <item>
