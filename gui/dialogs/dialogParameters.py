@@ -7,6 +7,9 @@ class dialogParameters(QDialog, Ui_Dialog):
         self.setupUi(self)
         self.stackedWidget.setCurrentIndex(start_page)
         self.btnSaveParameters.clicked.connect(self.save)
+        self.default = "Введите веса для функции потерь. Пример 1,1,1,1"
+        self.weights = [1, 1, 1, 1]
+        self.error = False
 
     def save(self):
         self.accept()
@@ -16,7 +19,8 @@ class dialogParameters(QDialog, Ui_Dialog):
             return {
                 'pop_size': self.spinBruteSize.value(),
                 'rQ': self.spinBruteQ.value(),
-                'rLamb': self.spinBruteL.value()
+                'rLamb': self.spinBruteL.value(),
+                'weights': self.parse_weights()
             }
         if self.stackedWidget.currentIndex() == 1:
             return {
@@ -24,7 +28,8 @@ class dialogParameters(QDialog, Ui_Dialog):
                 'rQ': self.spinLocalQ.value(),
                 'rLamb': self.spinLocalL.value(),
                 'percent': self.spinPercent.value(),
-                'enhanced': self.checkEnhanced.isChecked()
+                'enhanced': self.checkEnhanced.isChecked(),
+                'weights': self.parse_weights()
             }
         if self.stackedWidget.currentIndex() == 2:
             try:
@@ -34,5 +39,15 @@ class dialogParameters(QDialog, Ui_Dialog):
             return {
                 'lr': self.spinLR.value(),
                 'eps': eps,
-                'patience': self.spinPatience.value()
+                'patience': self.spinPatience.value(),
+                'weights': self.parse_weights()
             }
+    def parse_weights(self):
+        text = self.lineWeights.text()
+        try:
+            if text != self.default:
+                self.weights = [float(x) for x in text.split(sep=',')]
+        except Exception:
+            QMessageBox.critical(self, "ОШИБКА", "Перепроверьте задание весов. Пример: 1.0, 1.0, 1.0, 1.0")
+            self.error = True
+
