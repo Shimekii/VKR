@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'DialogParameters.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.10.1
+## Created by: Qt User Interface Compiler version 6.10.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -217,6 +217,11 @@ class Ui_Dialog(object):
 
         self.verticalLayout_2.addWidget(self.stackedWidget)
 
+        self.lineWeights = QLineEdit(Dialog)
+        self.lineWeights.setObjectName(u"lineWeights")
+
+        self.verticalLayout_2.addWidget(self.lineWeights)
+
         self.btnSaveParameters = QPushButton(Dialog)
         self.btnSaveParameters.setObjectName(u"btnSaveParameters")
 
@@ -225,7 +230,7 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
 
-        self.stackedWidget.setCurrentIndex(2)
+        self.stackedWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(Dialog)
@@ -251,6 +256,7 @@ class Ui_Dialog(object):
         self.lineEpsilon.setText(QCoreApplication.translate("Dialog", u"1e-7", None))
         self.label_12.setText(QCoreApplication.translate("Dialog", u"Learning rate", None))
         self.label_13.setText(QCoreApplication.translate("Dialog", u"\u0423\u0441\u043b\u043e\u0432\u0438\u0435 \u0440\u0430\u043d\u043d\u0435\u0439 \u043e\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0438", None))
+        self.lineWeights.setText(QCoreApplication.translate("Dialog", u"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0432\u0435\u0441\u0430 \u0434\u043b\u044f \u0444\u0443\u043d\u043a\u0446\u0438\u0438 \u043f\u043e\u0442\u0435\u0440\u044c. \u041f\u0440\u0438\u043c\u0435\u0440 1,1,1,1", None))
         self.btnSaveParameters.setText(QCoreApplication.translate("Dialog", u"\u0421\u041e\u0425\u0420\u0410\u041d\u0418\u0422\u042c", None))
     # retranslateUi
 
