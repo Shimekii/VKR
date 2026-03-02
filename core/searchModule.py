@@ -39,43 +39,49 @@ def generateRandomParameters(size, rQ = 10, rLamb = 10):
     return Q, Lambda, D
 
 # Функция ошибки
-def fit(individual, cvTarget, corrTarget, skewnessTarget = None, kurtosisTarget = None):
+def fit(individual, cvTarget, corrTarget, skewnessTarget = None, kurtosisTarget = None, weights = None):
     Q, Lambda, D = individual
+    weight_cv, weight_corr, weight_skew, weight_kurt = 1, 1, 1, 1
+    if weights is not None:
+        weight_cv = weights[0]
+        weight_corr = weights[1]
+        weight_skew = weights[2]
+        weight_kurt = weights[3]
     meanEmp, varEmp, cvEmp, corrEmp, skewnessEmp, kurtosisEmp = analysisModule.characteristics(Q, Lambda, D)
 
     if skewnessTarget is None and kurtosisTarget is None:
         error = (
-                ((cvEmp - cvTarget) / cvTarget) ** 2 +
-                ((corrEmp - corrTarget) / (1 + abs(corrTarget))) ** 2
+                weight_cv*((cvEmp - cvTarget) / cvTarget) ** 2 +
+                weight_corr*((corrEmp - corrTarget) / (1 + abs(corrTarget))) ** 2
         )
         return error / 2
     elif skewnessTarget is None:
         error = (
-                ((cvEmp - cvTarget) / cvTarget) ** 2 +
-                1.2*((corrEmp - corrTarget) / (1 + abs(corrTarget))) ** 2 +
-                ((kurtosisEmp - kurtosisTarget) / kurtosisTarget) ** 2
+                weight_cv*((cvEmp - cvTarget) / cvTarget) ** 2 +
+                weight_corr*((corrEmp - corrTarget) / (1 + abs(corrTarget))) ** 2 +
+                weight_kurt*((kurtosisEmp - kurtosisTarget) / kurtosisTarget) ** 2
         )
         return error / 3
     elif kurtosisTarget is None:
         error = (
-                ((cvEmp - cvTarget) / cvTarget) ** 2 +
-                1.2*((corrEmp - corrTarget) / (1 + abs(corrTarget))) ** 2 +
-                ((skewnessEmp - skewnessTarget) / skewnessTarget) ** 2
+                weight_cv*((cvEmp - cvTarget) / cvTarget) ** 2 +
+                weight_corr*((corrEmp - corrTarget) / (1 + abs(corrTarget))) ** 2 +
+                weight_skew*((skewnessEmp - skewnessTarget) / skewnessTarget) ** 2
         )
         return error / 3
     elif corrTarget is None:
         error = (
-            ((cvEmp - cvTarget) / cvTarget) ** 2 +
-            ((skewnessEmp - skewnessTarget) / skewnessTarget) ** 2 +
-            ((kurtosisEmp - kurtosisTarget) / kurtosisTarget) ** 2
+            weight_cv*((cvEmp - cvTarget) / cvTarget) ** 2 +
+            weight_skew*((skewnessEmp - skewnessTarget) / skewnessTarget) ** 2 +
+            weight_kurt*((kurtosisEmp - kurtosisTarget) / kurtosisTarget) ** 2
         )
         return error / 3
     else:
         error = (
-                ((cvEmp - cvTarget) / cvTarget) ** 2 +
-                1.3*((corrEmp - corrTarget) / (1 + abs(corrTarget))) ** 2 +
-                ((skewnessEmp - skewnessTarget) / skewnessTarget) ** 2 +
-                ((kurtosisEmp - kurtosisTarget) / kurtosisTarget) ** 2
+                weight_cv*((cvEmp - cvTarget) / cvTarget) ** 2 +
+                weight_corr*((corrEmp - corrTarget) / (1 + abs(corrTarget))) ** 2 +
+                weight_skew*((skewnessEmp - skewnessTarget) / skewnessTarget) ** 2 +
+                weight_kurt*((kurtosisEmp - kurtosisTarget) / kurtosisTarget) ** 2
         )
         return error / 4
 
@@ -91,19 +97,19 @@ def initialize_population(pop_size, size, rQ, rLamb):
 """_____________________________________________________________________________________"""
 
 # Алгоритм с последовательным перебором параметров
-"""
-    pop_size - кол-во генерируемых МАР-потоков для поиска начального решения
-    sizeMap - размер MAP-потока
-    cv - искомая вариация
-    corr = искомая корреляция
-    rQ - правая граница для Q
-    rLamb - правая граница для Lambda
-    skewness - коэффициент асимметрии
-    kurtosis - коэффициент эксцесса
-    точность изменяется динамически от последнего найденного решения
-"""
-
-def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=10, skewnessTarget = None, kurtosisTarget = None):
+def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=10, skewnessTarget = None, kurtosisTarget = None, weights = None):
+    """
+        pop_size - кол-во генерируемых МАР-потоков для поиска начального решения\n
+        sizeMap - размер MAP-потока\n
+        cv - искомая вариация\n
+        corr = искомая корреляция\n
+        rQ - правая граница для Q\n
+        rLamb - правая граница для Lambda\n
+        skewness - коэффициент асимметрии\n
+        kurtosis - коэффициент эксцесса\n
+        weights - веса для функции потерь\n
+        точность изменяется динамически от последнего найденного решения
+    """
     f = open("logSearch.txt", "a")
     best = []
     iter = 0
@@ -136,7 +142,7 @@ def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=
     while (eps / 10) < Fit and iter < maxIter:
         Q = GenQ(sizeMap, rQ)
         pop[0] = Q
-        Fit = fit(pop, cvTarget, corrTarget, skewnessTarget, kurtosisTarget)
+        Fit = fit(pop, cvTarget, corrTarget, skewnessTarget, kurtosisTarget, weights)
         if Fit < best_fitness:
             best_fitness = Fit
             best = copy.deepcopy(pop)
@@ -157,7 +163,7 @@ def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=
     while (eps / 10) < Fit and iter < maxIter:
         Lambda = GenL(sizeMap, rLamb)
         pop[1] = Lambda
-        Fit = fit(pop, cvTarget, corrTarget, skewnessTarget, kurtosisTarget)
+        Fit = fit(pop, cvTarget, corrTarget, skewnessTarget, kurtosisTarget, weights)
         if Fit < best_fitness:
             best_fitness = Fit
             best = copy.deepcopy(pop)
@@ -178,7 +184,7 @@ def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=
     while (eps / 10) < Fit and iter < maxIter:
         D = GenD(sizeMap)
         pop[2] = D
-        Fit = fit(pop, cvTarget, corrTarget, skewnessTarget, kurtosisTarget)
+        Fit = fit(pop, cvTarget, corrTarget, skewnessTarget, kurtosisTarget, weights)
         if Fit < best_fitness:
             best_fitness = Fit
             best = copy.deepcopy(pop)
@@ -198,19 +204,21 @@ def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=
 """_____________________________________________________________________________________"""
 # Алгоритм с перебором параметров MAP-потока в заданной окрестности
 
-"""
-    pop_size - кол-во генерируемых МАР-потоков для поиска начального решения
-    sizeMap - размерность MAP-потока
-    cvTarget - искомая вариация
-    corrTarget - искомая корреляция
-    rQ - правая граница Q
-    rLambda - правая граница Lambda
-    percent - окресность, в которой будут изменяться параметры Q и Lambda
-    skewnessTarget - коэффициент асимметрии
-    kurtosisTarget - коэффициент эксцесса
+
+def local_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=10, percent = 0.02, skewnessTarget = None, kurtosisTarget = None, enhanced = False, weights = None):
+    """
+    pop_size - кол-во генерируемых МАР-потоков для поиска начального решения\n
+    sizeMap - размерность MAP-потока\n
+    cvTarget - искомая вариация\n
+    corrTarget - искомая корреляция\n
+    rQ - правая граница Q\n
+    rLambda - правая граница Lambda\n
+    percent - окресность, в которой будут изменяться параметры Q и Lambda\n
+    skewnessTarget - коэффициент асимметрии\n
+    kurtosisTarget - коэффициент эксцесса\n
+    weights - веса для функции потерь
     точность изменяется динамически от последнего найденного решения
-"""
-def local_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=10, percent = 0.02, skewnessTarget = None, kurtosisTarget = None, enhanced = False):
+    """
     # Ищем начальное решение
     map, Fit = initialGuess(pop_size, sizeMap, cvTarget, corrTarget, rQ, rLamb, skewnessTarget, kurtosisTarget)
     #eps = 10 ** (math.floor(math.log10(abs(Fit))) + 1)  # Извлекаем точность
@@ -220,14 +228,14 @@ def local_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=10, pe
         eps = 10 ** (math.floor(math.log10(Fit)))
     if enhanced:
         # Изменяем параметры в окрестности percent до заданной точности
-        map, Fit, newInit = districEnhanced(map, percent, eps / 10, cvTarget, corrTarget, skewnessTarget, kurtosisTarget)
+        map, Fit, newInit = districEnhanced(map, percent, eps / 10, cvTarget, corrTarget, skewnessTarget, kurtosisTarget, weights)
         # если значение ошибки не изменяется, ищется новое начальное решение
         while newInit:
             map, Fit = initialGuess(pop_size, sizeMap, cvTarget, corrTarget, rQ, rLamb, skewnessTarget, kurtosisTarget)
             eps = 10 ** (math.floor(math.log10(Fit)))  # Извлекаем точность
-            map, Fit, newInit = districEnhanced(map, percent, eps / 10, cvTarget, corrTarget, skewnessTarget, kurtosisTarget)
+            map, Fit, newInit = districEnhanced(map, percent, eps / 10, cvTarget, corrTarget, skewnessTarget, kurtosisTarget, weights)
     else:
-        map = distric(map, percent, eps / 10, cvTarget, corrTarget, skewnessTarget, kurtosisTarget)
+        map = distric(map, percent, eps / 10, cvTarget, corrTarget, skewnessTarget, kurtosisTarget, weights)
     if not math.isfinite(Fit) or Fit == 0:
         eps = 1e-6  
     else:
@@ -241,7 +249,7 @@ def local_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=10, pe
     #print("D")
     while (eps / 10) < Fit and iter <= 5000:
         D = GenD(sizeMap)
-        Fit = fit([Q, Lambda, D], cvTarget, corrTarget, skewnessTarget, kurtosisTarget)
+        Fit = fit([Q, Lambda, D], cvTarget, corrTarget, skewnessTarget, kurtosisTarget, weights)
         if Fit < best_fitness:
             best_fitness = Fit
             best = Q, Lambda, D
@@ -259,7 +267,7 @@ def local_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=10, pe
     cv - искомая вариация
     corr - искомая корреляция
 """
-def distric(map, percent, eps, cv, corr, skewness, kurtosis):      # изменение каждого параметра по отдельности в его окресности
+def distric(map, percent, eps, cv, corr, skewness, kurtosis, weights):      # изменение каждого параметра по отдельности в его окресности
     #print("district")
     bestMap = copy.deepcopy(map)
     size = len(map[0])
@@ -278,7 +286,7 @@ def distric(map, percent, eps, cv, corr, skewness, kurtosis):      # измен�
                     Q[i][j] = 0
             Q[i][i] = -np.sum(Q[i])
             Lambda[i][i] *= (1 + np.random.uniform(-percent, percent))
-        Fit = fit([Q, Lambda, D], cv, corr, skewness, kurtosis)
+        Fit = fit([Q, Lambda, D], cv, corr, skewness, kurtosis, weights)
 
         if Fit < best:
             best = Fit
@@ -325,11 +333,11 @@ def meanMap(map, meanTarget):
 
 """________________________________________________________________"""
 
-def districEnhanced(map, percent, eps, cv, corr, skewness, kurtosis):      # изменение каждого параметра по отдельности в его окресности
+def districEnhanced(map, percent, eps, cv, corr, skewness, kurtosis, weights):      # изменение каждого параметра по отдельности в его окресности
     #print("district")
     bestMap = copy.deepcopy(map)
     size = len(map[0])
-    Fit = fit(map, cv, corr, skewness, kurtosis)
+    Fit = fit(map, cv, corr, skewness, kurtosis, weights)
     k = 0
     it = 0
     best = float('inf')
@@ -340,27 +348,27 @@ def districEnhanced(map, percent, eps, cv, corr, skewness, kurtosis):      # и�
             for j in range(size):
                 if i != j:
                     # Сохраняем ошибку до изменений
-                    prevFit = fit([Q, Lambda, D], cv, corr, skewness, kurtosis)
+                    prevFit = fit([Q, Lambda, D], cv, corr, skewness, kurtosis, weights)
                     origQ = Q[i][j]     # сохраняем Qij до изменений
                     Q[i][j] *= (1 + np.random.uniform(0, percent))      # изменяем Qij в большую сторону на percent
                     Q = recoveryQ(Q)    # восстанавливаем Q
-                    Fit = fit([Q, Lambda, D], cv, corr, skewness, kurtosis)     # вычисляем ошибку после изменений
+                    Fit = fit([Q, Lambda, D], cv, corr, skewness, kurtosis, weights)     # вычисляем ошибку после изменений
                     if prevFit < Fit:       # если ошибка не уменьшилась, пробуем изменить в другую сторону
                         Q[i][j] = origQ     # Qij возвращаем к исходному значению
                         Q[i][j] *= (1 - np.random.uniform(0, percent))   # изменяем Qij в меньшую сторону на percent
                         Q = recoveryQ(Q)    # восстанавливаем Q
-                        Fit = fit([Q, Lambda, D], cv, corr, skewness, kurtosis) # вычисляем ошибку после изменений
+                        Fit = fit([Q, Lambda, D], cv, corr, skewness, kurtosis, weights) # вычисляем ошибку после изменений
                         if prevFit < Fit:   # если ошибка опять не уменьшилась, то возвращаемся к исходному Qij
                             Q[i][j] = origQ
                             Q = recoveryQ(Q)
-            prevFit = fit([Q, Lambda, D], cv, corr, skewness, kurtosis)     # сохраняем ошибку до изменений Lambda
+            prevFit = fit([Q, Lambda, D], cv, corr, skewness, kurtosis, weights)     # сохраняем ошибку до изменений Lambda
             origL = Lambda[i][i]    # сохраняем Lambda_i
             Lambda[i][i] *= (1 + percent)   # изменяем Lambda_i в большую сторону на percent
-            Fit = fit([Q, Lambda, D], cv, corr, skewness, kurtosis)         # вычисляем ошибку после изменений
+            Fit = fit([Q, Lambda, D], cv, corr, skewness, kurtosis, weights)         # вычисляем ошибку после изменений
             if prevFit < Fit:       # если ошибка не уменьшилась, то возвращаемся к исходной Lambda_i
                 Lambda[i][i] = origL        # Lambda_i возвращаем к исходному значению
                 Lambda[i][i] *= (1 - percent)   # изменяем Lambda_i в меньшую сторону
-                Fit = fit([Q, Lambda, D], cv, corr, skewness, kurtosis)     # вычисляем ошибку после изменений
+                Fit = fit([Q, Lambda, D], cv, corr, skewness, kurtosis, weights)     # вычисляем ошибку после изменений
                 if prevFit < Fit:   # если ошибка опять не уменьшилась, то возвращаемся к исходному Lambda_i
                     Lambda[i][i] = origL
                     Fit = prevFit
