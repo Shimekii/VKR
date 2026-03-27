@@ -7,45 +7,54 @@ device = 'cpu'
 
 """Stohastic gradient descent"""
 
-def torch_fit(individual, cvTarget, corrTarget, skewnessTarget = None, kurtosisTarget = None):
+def torch_fit(individual, cvTarget, corrTarget, weights, skewnessTarget = None, kurtosisTarget = None):
     Q, Lambda, D = individual
     meanEmp, varEmp, cvEmp, corrEmp, skewnessEmp, kurtosisEmp = torch_characteristics(Q, Lambda, D)
+
+    weight_cv = weights[0]
+    weight_corr = weights[1]
+    weight_skew = weights[2]
+    weight_kurt = weights[3]
 
     cvTarget_tensor = torch.tensor(cvTarget, dtype=Q.dtype, device=device)
     corrTarget_tensor = torch.tensor(corrTarget, dtype=Q.dtype, device=device)
 
     if skewnessTarget is None and kurtosisTarget is None:
         error = (
-                ((cvEmp - cvTarget_tensor) / cvTarget_tensor) ** 2 +
-                ((corrEmp - corrTarget_tensor) / (1 + torch.abs(corrTarget_tensor))) ** 2
+                weight_cv*((cvEmp - cvTarget_tensor) / cvTarget_tensor) ** 2 +
+                weight_corr*((corrEmp - corrTarget_tensor) / (1 + torch.abs(corrTarget_tensor))) ** 2
         )
-        return error / 2
+        sum_weights = weight_cv + weight_corr
+        return error / sum_weights
     elif skewnessTarget is None:
         kurtosisTarget_tensor = torch.tensor(kurtosisTarget, dtype=Q.dtype, device=device)
         error = (
-                ((cvEmp - cvTarget_tensor) / cvTarget_tensor) ** 2 +
-                ((corrEmp - corrTarget_tensor) / (1 + torch.abs(corrTarget_tensor))) ** 2 +
-                ((kurtosisEmp - kurtosisTarget_tensor) / kurtosisTarget_tensor) ** 2
+                weight_cv*((cvEmp - cvTarget_tensor) / cvTarget_tensor) ** 2 +
+                weight_corr*((corrEmp - corrTarget_tensor) / (1 + torch.abs(corrTarget_tensor))) ** 2 +
+                weight_kurt*((kurtosisEmp - kurtosisTarget_tensor) / kurtosisTarget_tensor) ** 2
         )
-        return error / 3
+        sum_weights = weight_cv + weight_corr + weight_kurt
+        return error / sum_weights
     elif kurtosisTarget is None:
         skewnessTarget_tensor = torch.tensor(skewnessTarget, dtype=Q.dtype, device=device)
         error = (
-                ((cvEmp - cvTarget_tensor) / cvTarget_tensor) ** 2 +
-                ((corrEmp - corrTarget_tensor) / (1 + torch.abs(corrTarget_tensor))) ** 2 +
-                ((skewnessEmp - skewnessTarget_tensor) / skewnessTarget_tensor) ** 2
+                weight_cv*((cvEmp - cvTarget_tensor) / cvTarget_tensor) ** 2 +
+                weight_corr*((corrEmp - corrTarget_tensor) / (1 + torch.abs(corrTarget_tensor))) ** 2 +
+                weight_skew*((skewnessEmp - skewnessTarget_tensor) / skewnessTarget_tensor) ** 2
         )
-        return error / 3
+        sum_weights = weight_cv + weight_corr + weight_skew
+        return error / sum_weights
     else:
         skewnessTarget_tensor = torch.tensor(skewnessTarget, dtype=Q.dtype, device=device)
         kurtosisTarget_tensor = torch.tensor(kurtosisTarget, dtype=Q.dtype, device=device)
         error = (
-                ((cvEmp - cvTarget_tensor) / cvTarget_tensor) ** 2 +
-                ((corrEmp - corrTarget_tensor) / (1 + torch.abs(corrTarget_tensor))) ** 2 +
-                ((skewnessEmp - skewnessTarget_tensor) / skewnessTarget_tensor) ** 2 +
-                6.0 * ((kurtosisEmp - kurtosisTarget_tensor) / kurtosisTarget_tensor) ** 2
+                weight_cv*((cvEmp - cvTarget_tensor) / cvTarget_tensor) ** 2 +
+                weight_corr*((corrEmp - corrTarget_tensor) / (1 + torch.abs(corrTarget_tensor))) ** 2 +
+                weight_skew*((skewnessEmp - skewnessTarget_tensor) / skewnessTarget_tensor) ** 2 +
+                weight_kurt*((kurtosisEmp - kurtosisTarget_tensor) / kurtosisTarget_tensor) ** 2
         )
-        return error / 4
+        sum_weights = weight_cv + weight_corr + weight_skew + weight_kurt
+        return error / sum_weights
 
 def torch_compute_stationary_distribution(Q):
     n = Q.shape[0]
@@ -224,9 +233,8 @@ def vector_to_matrix(Q_vec, Lambda_vec, D_vec, size):
     
     return Q, Lambda, D
 
-def sgd_optimization(sizeMap, cvTarget, corrTarget, skewnessTarget=None, kurtosisTarget=None, num_epochs=1000, lr=0.05, eps=1e-7, patience=500):
+def sgd_optimization(sizeMap, cvTarget, corrTarget, skewnessTarget=None, kurtosisTarget=None, num_epochs=1000, lr=0.05, eps=1e-7, patience=500, weights = [1,1,1,1]):
     Q_np, Lambda_np, D_np = am.generateRandomParameters(sizeMap, 'map', rQ=10, rLamb=10)
-    
     # Создаем параметры
     Q_params, Lambda_params, D_params = create_learnable_matrices(sizeMap, Q_np, Lambda_np, D_np)
     
@@ -247,7 +255,7 @@ def sgd_optimization(sizeMap, cvTarget, corrTarget, skewnessTarget=None, kurtosi
         Q, Lambda, D = build_matrices_from_params(Q_params, Lambda_params, D_params, sizeMap)
         
         individual = (Q, Lambda, D)
-        loss = torch_fit(individual, cvTarget, corrTarget, skewnessTarget, kurtosisTarget)
+        loss = torch_fit(individual, cvTarget, corrTarget, weights, skewnessTarget, kurtosisTarget)
 
         loss.backward()
         optimizer.step()
