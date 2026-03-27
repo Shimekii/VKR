@@ -7,8 +7,6 @@ class dialogParameters(QDialog, Ui_Dialog):
         self.setupUi(self)
         self.stackedWidget.setCurrentIndex(start_page)
         self.btnSaveParameters.clicked.connect(self.save)
-        self.default = "Введите веса для функции потерь. Пример 1,1,1,1"
-        self.weights = [1, 1, 1, 1]
         self.error = False
 
     def save(self):
@@ -43,10 +41,17 @@ class dialogParameters(QDialog, Ui_Dialog):
                 'weights': self.parse_weights()
             }
     def parse_weights(self):
-        text = self.lineWeights.text()
+        text = self.lineWeights.text().strip()
+
+        if not text:
+            return [1, 1, 1, 1]
+
         try:
-            if text != self.default:
-                self.weights = [float(x) for x in text.split(sep=',')]
+            weights = [float(x.strip()) for x in text.split(sep=',')]
+            if len(weights) < 4:
+                for i in range(len(weights), 4):
+                    weights.append(1)
+            return weights
         except Exception:
             QMessageBox.critical(self, "ОШИБКА", "Перепроверьте задание весов. Пример: 1.0, 1.0, 1.0, 1.0")
             self.error = True
