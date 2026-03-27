@@ -360,6 +360,9 @@
    <item>
     <widget class="QLineEdit" name="lineWeights">
      <property name="text">
+      <string/>
+     </property>
+     <property name="placeholderText">
       <string>Введите веса для функции потерь. Пример 1,1,1,1</string>
      </property>
     </widget>
