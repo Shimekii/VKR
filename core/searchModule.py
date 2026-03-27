@@ -54,28 +54,32 @@ def fit(individual, cvTarget, corrTarget, skewnessTarget = None, kurtosisTarget 
                 weight_cv*((cvEmp - cvTarget) / cvTarget) ** 2 +
                 weight_corr*((corrEmp - corrTarget) / (1 + abs(corrTarget))) ** 2
         )
-        return error / 2
+        sum_weight = weight_cv + weight_corr
+        return error / sum_weight
     elif skewnessTarget is None:
         error = (
                 weight_cv*((cvEmp - cvTarget) / cvTarget) ** 2 +
                 weight_corr*((corrEmp - corrTarget) / (1 + abs(corrTarget))) ** 2 +
                 weight_kurt*((kurtosisEmp - kurtosisTarget) / kurtosisTarget) ** 2
         )
-        return error / 3
+        sum_weight = weight_cv + weight_corr + weight_kurt
+        return error / sum_weight
     elif kurtosisTarget is None:
         error = (
                 weight_cv*((cvEmp - cvTarget) / cvTarget) ** 2 +
                 weight_corr*((corrEmp - corrTarget) / (1 + abs(corrTarget))) ** 2 +
                 weight_skew*((skewnessEmp - skewnessTarget) / skewnessTarget) ** 2
         )
-        return error / 3
+        sum_weight = weight_cv + weight_corr + weight_skew
+        return error / sum_weight
     elif corrTarget is None:
         error = (
             weight_cv*((cvEmp - cvTarget) / cvTarget) ** 2 +
             weight_skew*((skewnessEmp - skewnessTarget) / skewnessTarget) ** 2 +
             weight_kurt*((kurtosisEmp - kurtosisTarget) / kurtosisTarget) ** 2
         )
-        return error / 3
+        sum_weight = weight_cv + weight_skew + weight_kurt
+        return error / sum_weight
     else:
         error = (
                 weight_cv*((cvEmp - cvTarget) / cvTarget) ** 2 +
@@ -83,7 +87,8 @@ def fit(individual, cvTarget, corrTarget, skewnessTarget = None, kurtosisTarget 
                 weight_skew*((skewnessEmp - skewnessTarget) / skewnessTarget) ** 2 +
                 weight_kurt*((kurtosisEmp - kurtosisTarget) / kurtosisTarget) ** 2
         )
-        return error / 4
+        sum_weight = weight_cv + weight_corr + weight_skew + weight_kurt
+        return error / sum_weight
 
 
 # Функция для генерации pop_size MAP-потоков со случайными параметрами
@@ -121,7 +126,7 @@ def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=
     #print("Pop")
     while best_fitness > 0.0001 and iter < 1000:
         population = initialize_population(pop_size, sizeMap, rQ, rLamb)
-        fitness_values = [fit(individual, cvTarget, corrTarget, skewnessTarget, kurtosisTarget) for individual in population]
+        fitness_values = [fit(individual, cvTarget, corrTarget, skewnessTarget, kurtosisTarget, weights) for individual in population]
         current_best_fitness = min(fitness_values)
         if current_best_fitness < best_fitness:
             best_fitness = current_best_fitness
@@ -191,7 +196,7 @@ def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=
         iter += 1
         #print(f"\rИтерация: {iter}, Fit: {Fit}", end="")
 
-    mean, var, cvE, corrE, skewnessE, kurtosisE  = analysisModule.characteristics(best[0], best[1], best[2])
+    # mean, var, cvE, corrE, skewnessE, kurtosisE  = analysisModule.characteristics(best[0], best[1], best[2])
     #print(f"\nНайденная вариация: {cvE}")
     #print(f"Найденная корреляция: {corrE}")
     #print(f"Найденный коэф.асимметрии: {skewnessE}")
