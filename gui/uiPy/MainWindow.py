@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainWindow.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.10.2
+## Created by: Qt User Interface Compiler version 6.10.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -27,13 +27,13 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(800, 695)
+        MainWindow.resize(1035, 823)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
-        MainWindow.setMinimumSize(QSize(800, 695))
+        MainWindow.setMinimumSize(QSize(1035, 823))
         MainWindow.setMaximumSize(QSize(10000, 10000))
         MainWindow.setBaseSize(QSize(800, 5))
         font = QFont()
@@ -41,6 +41,7 @@ class Ui_MainWindow(object):
         font.setPointSize(18)
         font.setBold(True)
         MainWindow.setFont(font)
+        MainWindow.setDockOptions(QMainWindow.DockOption.AllowTabbedDocks|QMainWindow.DockOption.AnimatedDocks)
         self.lightTheme = QAction(MainWindow)
         self.lightTheme.setObjectName(u"lightTheme")
         font1 = QFont()
@@ -51,22 +52,147 @@ class Ui_MainWindow(object):
         self.darkTheme.setFont(font1)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
-        self.verticalLayout_4 = QVBoxLayout(self.centralwidget)
-        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.verticalLayout_11 = QVBoxLayout(self.centralwidget)
+        self.verticalLayout_11.setObjectName(u"verticalLayout_11")
         self.title = QLabel(self.centralwidget)
         self.title.setObjectName(u"title")
         self.title.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
         self.title.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.verticalLayout_4.addWidget(self.title)
+        self.verticalLayout_11.addWidget(self.title)
+
+        self.line = QFrame(self.centralwidget)
+        self.line.setObjectName(u"line")
+        self.line.setFrameShape(QFrame.Shape.HLine)
+        self.line.setFrameShadow(QFrame.Shadow.Sunken)
+
+        self.verticalLayout_11.addWidget(self.line)
+
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+        self.buttons = QWidget(self.centralwidget)
+        self.buttons.setObjectName(u"buttons")
+        self.verticalLayout_4 = QVBoxLayout(self.buttons)
+        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
+        self.splitter = QSplitter(self.buttons)
+        self.splitter.setObjectName(u"splitter")
+        self.splitter.setOrientation(Qt.Orientation.Vertical)
+        self.btnPageTrace = QPushButton(self.splitter)
+        self.btnPageTrace.setObjectName(u"btnPageTrace")
+        font2 = QFont()
+        font2.setFamilies([u"Microsoft JhengHei"])
+        font2.setPointSize(11)
+        font2.setBold(False)
+        font2.setKerning(True)
+        self.btnPageTrace.setFont(font2)
+        self.btnPageTrace.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.btnPageTrace.setStyleSheet(u"QPushButton {\n"
+"    text-align: left;\n"
+"    border-radius: 6px;\n"
+"    padding: 4px;\n"
+"    padding-right: 15px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: palette(mid);\n"
+"}\n"
+"\n"
+"QPushButton:checked {\n"
+"    background-color: palette(highlight);\n"
+"    color: palette(highlighted-text);\n"
+"}")
+        self.btnPageTrace.setCheckable(True)
+        self.btnPageTrace.setChecked(False)
+        self.btnPageTrace.setAutoExclusive(False)
+        self.splitter.addWidget(self.btnPageTrace)
+        self.btnPageCompare = QPushButton(self.splitter)
+        self.btnPageCompare.setObjectName(u"btnPageCompare")
+        font3 = QFont()
+        font3.setFamilies([u"Microsoft JhengHei"])
+        font3.setPointSize(11)
+        font3.setBold(False)
+        self.btnPageCompare.setFont(font3)
+        self.btnPageCompare.setStyleSheet(u"QPushButton {\n"
+"    text-align: left;\n"
+"    border-radius: 6px;\n"
+"    padding: 4px;\n"
+"    padding-right: 15px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: palette(mid);\n"
+"}\n"
+"\n"
+"QPushButton:checked {\n"
+"    background-color: palette(highlight);\n"
+"    color: palette(highlighted-text);\n"
+"}")
+        self.btnPageCompare.setCheckable(True)
+        self.splitter.addWidget(self.btnPageCompare)
+        self.splitter_2 = QSplitter(self.splitter)
+        self.splitter_2.setObjectName(u"splitter_2")
+        self.splitter_2.setOrientation(Qt.Orientation.Vertical)
+        self.btnPageGenerate = QPushButton(self.splitter_2)
+        self.btnPageGenerate.setObjectName(u"btnPageGenerate")
+        self.btnPageGenerate.setFont(font3)
+        self.btnPageGenerate.setStyleSheet(u"QPushButton {\n"
+"    text-align: left;\n"
+"    border-radius: 6px;\n"
+"    padding: 4px;\n"
+"    padding-right: 15px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: palette(mid);\n"
+"}\n"
+"\n"
+"QPushButton:checked {\n"
+"    background-color: palette(highlight);\n"
+"    color: palette(highlighted-text);\n"
+"}")
+        self.btnPageGenerate.setCheckable(True)
+        self.splitter_2.addWidget(self.btnPageGenerate)
+        self.btnPageSearch = QPushButton(self.splitter_2)
+        self.btnPageSearch.setObjectName(u"btnPageSearch")
+        self.btnPageSearch.setFont(font3)
+        self.btnPageSearch.setAcceptDrops(False)
+        self.btnPageSearch.setAutoFillBackground(False)
+        self.btnPageSearch.setStyleSheet(u"QPushButton {\n"
+"    text-align: left;\n"
+"    border-radius: 6px;\n"
+"    padding: 4px;\n"
+"    padding-right: 15px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: palette(mid);\n"
+"}\n"
+"\n"
+"QPushButton:checked {\n"
+"    background-color: palette(highlight);\n"
+"    color: palette(highlighted-text);\n"
+"}")
+        self.btnPageSearch.setCheckable(True)
+        self.btnPageSearch.setChecked(False)
+        self.btnPageSearch.setAutoDefault(False)
+        self.btnPageSearch.setFlat(False)
+        self.splitter_2.addWidget(self.btnPageSearch)
+        self.splitter.addWidget(self.splitter_2)
+
+        self.verticalLayout_4.addWidget(self.splitter)
+
+
+        self.horizontalLayout_5.addWidget(self.buttons, 0, Qt.AlignmentFlag.AlignTop)
 
         self.stackedWidget = QStackedWidget(self.centralwidget)
         self.stackedWidget.setObjectName(u"stackedWidget")
-        font2 = QFont()
-        font2.setFamilies([u"Microsoft JhengHei"])
-        font2.setPointSize(10)
-        font2.setBold(False)
-        self.stackedWidget.setFont(font2)
+        font4 = QFont()
+        font4.setFamilies([u"Microsoft JhengHei"])
+        font4.setPointSize(10)
+        font4.setBold(False)
+        self.stackedWidget.setFont(font4)
+        self.stackedWidget.setAutoFillBackground(False)
+        self.stackedWidget.setStyleSheet(u"")
         self.startPage = QWidget()
         self.startPage.setObjectName(u"startPage")
         self.verticalLayout_2 = QVBoxLayout(self.startPage)
@@ -83,18 +209,18 @@ class Ui_MainWindow(object):
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
         self.label = QLabel(self.tracePage)
         self.label.setObjectName(u"label")
-        font3 = QFont()
-        font3.setFamilies([u"Microsoft JhengHei"])
-        font3.setPointSize(10)
-        font3.setBold(True)
-        self.label.setFont(font3)
+        font5 = QFont()
+        font5.setFamilies([u"Microsoft JhengHei"])
+        font5.setPointSize(10)
+        font5.setBold(True)
+        self.label.setFont(font5)
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.verticalLayout_9.addWidget(self.label)
 
         self.textEdit = QTextEdit(self.tracePage)
         self.textEdit.setObjectName(u"textEdit")
-        self.textEdit.setFont(font2)
+        self.textEdit.setFont(font4)
         self.textEdit.setReadOnly(True)
 
         self.verticalLayout_9.addWidget(self.textEdit)
@@ -104,11 +230,11 @@ class Ui_MainWindow(object):
         self.splitter_5.setOrientation(Qt.Orientation.Horizontal)
         self.btnReadTrace = QPushButton(self.splitter_5)
         self.btnReadTrace.setObjectName(u"btnReadTrace")
-        self.btnReadTrace.setFont(font3)
+        self.btnReadTrace.setFont(font5)
         self.splitter_5.addWidget(self.btnReadTrace)
         self.btnTranferCharacteristics = QPushButton(self.splitter_5)
         self.btnTranferCharacteristics.setObjectName(u"btnTranferCharacteristics")
-        self.btnTranferCharacteristics.setFont(font3)
+        self.btnTranferCharacteristics.setFont(font5)
         self.splitter_5.addWidget(self.btnTranferCharacteristics)
 
         self.verticalLayout_9.addWidget(self.splitter_5)
@@ -137,7 +263,7 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.tracePage)
         self.searchPage = QWidget()
         self.searchPage.setObjectName(u"searchPage")
-        self.searchPage.setFont(font2)
+        self.searchPage.setFont(font4)
         self.horizontalLayout = QHBoxLayout(self.searchPage)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.groupBox = QGroupBox(self.searchPage)
@@ -243,7 +369,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addWidget(self.btnAdditionalParameters)
 
 
-        self.horizontalLayout.addWidget(self.groupBox)
+        self.horizontalLayout.addWidget(self.groupBox, 0, Qt.AlignmentFlag.AlignTop)
 
         self.groupBox_2 = QGroupBox(self.searchPage)
         self.groupBox_2.setObjectName(u"groupBox_2")
@@ -317,6 +443,12 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.searchPage)
         self.genTracePage = QWidget()
         self.genTracePage.setObjectName(u"genTracePage")
+        font6 = QFont()
+        font6.setFamilies([u"Segoe UI"])
+        font6.setPointSize(9)
+        font6.setBold(False)
+        self.genTracePage.setFont(font6)
+        self.genTracePage.setStyleSheet(u"")
         self.horizontalLayout_4 = QHBoxLayout(self.genTracePage)
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.widget = QWidget(self.genTracePage)
@@ -331,6 +463,11 @@ class Ui_MainWindow(object):
 
         self.spinSizeMap = QSpinBox(self.widget)
         self.spinSizeMap.setObjectName(u"spinSizeMap")
+        font7 = QFont()
+        font7.setFamilies([u"Segoe UI"])
+        font7.setPointSize(10)
+        font7.setBold(False)
+        self.spinSizeMap.setFont(font7)
         self.spinSizeMap.setMinimum(2)
         self.spinSizeMap.setMaximum(5)
 
@@ -338,41 +475,51 @@ class Ui_MainWindow(object):
 
         self.label_7 = QLabel(self.widget)
         self.label_7.setObjectName(u"label_7")
+        self.label_7.setFont(font7)
 
         self.verticalLayout.addWidget(self.label_7)
 
         self.matrixQ = QPlainTextEdit(self.widget)
         self.matrixQ.setObjectName(u"matrixQ")
+        self.matrixQ.setFont(font7)
 
         self.verticalLayout.addWidget(self.matrixQ)
 
         self.label_8 = QLabel(self.widget)
         self.label_8.setObjectName(u"label_8")
+        self.label_8.setFont(font7)
 
         self.verticalLayout.addWidget(self.label_8)
 
         self.matrixL = QPlainTextEdit(self.widget)
         self.matrixL.setObjectName(u"matrixL")
+        self.matrixL.setFont(font7)
 
         self.verticalLayout.addWidget(self.matrixL)
 
         self.label_9 = QLabel(self.widget)
         self.label_9.setObjectName(u"label_9")
+        self.label_9.setFont(font7)
 
         self.verticalLayout.addWidget(self.label_9)
 
         self.matrixD = QPlainTextEdit(self.widget)
         self.matrixD.setObjectName(u"matrixD")
+        self.matrixD.setFont(font7)
 
         self.verticalLayout.addWidget(self.matrixD)
 
         self.label_10 = QLabel(self.widget)
         self.label_10.setObjectName(u"label_10")
+        self.label_10.setFont(font7)
 
         self.verticalLayout.addWidget(self.label_10)
 
         self.spinTotalEvents = QSpinBox(self.widget)
         self.spinTotalEvents.setObjectName(u"spinTotalEvents")
+        self.spinTotalEvents.setFont(font7)
+        self.spinTotalEvents.setWrapping(False)
+        self.spinTotalEvents.setFrame(True)
         self.spinTotalEvents.setMinimum(1000)
         self.spinTotalEvents.setMaximum(10000000)
         self.spinTotalEvents.setSingleStep(1000)
@@ -381,11 +528,13 @@ class Ui_MainWindow(object):
 
         self.btnGenerate = QPushButton(self.widget)
         self.btnGenerate.setObjectName(u"btnGenerate")
+        self.btnGenerate.setFont(font7)
 
         self.verticalLayout.addWidget(self.btnGenerate)
 
         self.btnLoadMap = QPushButton(self.widget)
         self.btnLoadMap.setObjectName(u"btnLoadMap")
+        self.btnLoadMap.setFont(font7)
 
         self.verticalLayout.addWidget(self.btnLoadMap)
 
@@ -455,48 +604,10 @@ class Ui_MainWindow(object):
 
         self.stackedWidget.addWidget(self.comparePage)
 
-        self.verticalLayout_4.addWidget(self.stackedWidget)
-
-        self.horizontalLayout_5 = QHBoxLayout()
-        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
-        self.splitter_2 = QSplitter(self.centralwidget)
-        self.splitter_2.setObjectName(u"splitter_2")
-        self.splitter_2.setOrientation(Qt.Orientation.Vertical)
-        self.btnPageGenerate = QPushButton(self.splitter_2)
-        self.btnPageGenerate.setObjectName(u"btnPageGenerate")
-        font4 = QFont()
-        font4.setFamilies([u"Microsoft JhengHei"])
-        font4.setPointSize(14)
-        font4.setBold(True)
-        self.btnPageGenerate.setFont(font4)
-        self.splitter_2.addWidget(self.btnPageGenerate)
-        self.btnPageSearch = QPushButton(self.splitter_2)
-        self.btnPageSearch.setObjectName(u"btnPageSearch")
-        self.btnPageSearch.setFont(font4)
-        self.btnPageSearch.setAcceptDrops(False)
-        self.btnPageSearch.setAutoFillBackground(False)
-        self.btnPageSearch.setAutoDefault(False)
-        self.btnPageSearch.setFlat(False)
-        self.splitter_2.addWidget(self.btnPageSearch)
-
-        self.horizontalLayout_5.addWidget(self.splitter_2)
-
-        self.splitter = QSplitter(self.centralwidget)
-        self.splitter.setObjectName(u"splitter")
-        self.splitter.setOrientation(Qt.Orientation.Vertical)
-        self.btnPageTrace = QPushButton(self.splitter)
-        self.btnPageTrace.setObjectName(u"btnPageTrace")
-        self.btnPageTrace.setFont(font4)
-        self.splitter.addWidget(self.btnPageTrace)
-        self.btnPageCompare = QPushButton(self.splitter)
-        self.btnPageCompare.setObjectName(u"btnPageCompare")
-        self.btnPageCompare.setFont(font4)
-        self.splitter.addWidget(self.btnPageCompare)
-
-        self.horizontalLayout_5.addWidget(self.splitter)
+        self.horizontalLayout_5.addWidget(self.stackedWidget)
 
 
-        self.verticalLayout_4.addLayout(self.horizontalLayout_5)
+        self.verticalLayout_11.addLayout(self.horizontalLayout_5)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QStatusBar(MainWindow)
@@ -505,15 +616,15 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
         self.menuBar = QMenuBar(MainWindow)
         self.menuBar.setObjectName(u"menuBar")
-        self.menuBar.setGeometry(QRect(0, 0, 800, 33))
-        font5 = QFont()
-        font5.setFamilies([u"Microsoft JhengHei"])
-        font5.setPointSize(9)
-        font5.setBold(False)
-        self.menuBar.setFont(font5)
+        self.menuBar.setGeometry(QRect(0, 0, 1035, 33))
+        font8 = QFont()
+        font8.setFamilies([u"Microsoft JhengHei"])
+        font8.setPointSize(9)
+        font8.setBold(False)
+        self.menuBar.setFont(font8)
         self.menu = QMenu(self.menuBar)
         self.menu.setObjectName(u"menu")
-        self.menu.setFont(font5)
+        self.menu.setFont(font8)
         MainWindow.setMenuBar(self.menuBar)
 
         self.menuBar.addAction(self.menu.menuAction())
@@ -522,8 +633,8 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.stackedWidget.setCurrentIndex(2)
         self.btnPageSearch.setDefault(False)
+        self.stackedWidget.setCurrentIndex(3)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -534,24 +645,28 @@ class Ui_MainWindow(object):
         self.lightTheme.setText(QCoreApplication.translate("MainWindow", u"\u0421\u0432\u0435\u0442\u043b\u0430\u044f \u0442\u0435\u043c\u0430", None))
         self.darkTheme.setText(QCoreApplication.translate("MainWindow", u"\u0422\u0435\u043c\u043d\u0430\u044f \u0442\u0435\u043c\u0430", None))
         self.title.setText(QCoreApplication.translate("MainWindow", u"\u041f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0430 \u0434\u043b\u044f \u043f\u043e\u0434\u0431\u043e\u0440\u0430 \u043f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u043e\u0432 MAP-\u043f\u043e\u0442\u043e\u043a\u0430", None))
+        self.btnPageTrace.setText(QCoreApplication.translate("MainWindow", u"\u0427\u0442\u0435\u043d\u0438\u0435 \u0442\u0440\u0430\u0441\u0441\u044b", None))
+        self.btnPageCompare.setText(QCoreApplication.translate("MainWindow", u"\u0421\u0440\u0430\u0432\u043d\u0438\u0442\u044c \u0434\u0432\u0435 \u0442\u0440\u0430\u0441\u0441\u044b", None))
+        self.btnPageGenerate.setText(QCoreApplication.translate("MainWindow", u"\u0421\u0433\u0435\u043d\u0435\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0442\u0440\u0430\u0441\u0441\u0443", None))
+        self.btnPageSearch.setText(QCoreApplication.translate("MainWindow", u"\u041f\u043e\u0434\u043e\u0431\u0440\u0430\u0442\u044c MAP-\u043f\u043e\u0442\u043e\u043a", None))
         self.textBrowser.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "hr { height: 1px; border-width: 0; }\n"
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
-"</style></head><body style=\" font-family:'Microsoft JhengHei'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">\u0414\u0430\u043d\u043d\u0430\u044f \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0430 \u043f\u0440\u0435\u0434\u043d\u0430\u0437\u043d\u0430\u0447\u0435\u043d\u0430 \u0434\u043b\u044f \u043f\u043e\u0434\u0431\u043e\u0440\u0430 \u043f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u043e\u0432 MAP-\u043f\u043e\u0442\u043e\u043a\u0430. \u0414\u043b\u044f \u043d"
-                        "\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u0438 \u043f\u043e \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0435 \u043d\u0435\u043e\u0431\u0445\u043e\u0434\u0438\u043c\u043e \u043d\u0430\u0436\u0430\u0442\u044c \u043d\u0435\u043e\u0431\u0445\u043e\u0434\u0438\u043c\u044b\u0435 \u043a\u043d\u043e\u043f\u043a\u0438 \u0441\u043d\u0438\u0437\u0443.</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">\u041a\u043d\u043e\u043f\u043a\u0430 &quot;</span><span style=\" font-size:12pt; font-weight:700;\">\u0421\u0447\u0438\u0442\u0430\u0442\u044c \u0442\u0440\u0430\u0441\u0441\u0443</span><span style=\" font-size:12pt;\">&quot; \u043f\u043e\u0437\u0432\u043e\u043b\u044f\u0435\u0442 \u043f\u0440\u043e\u0430\u043d\u0430\u043b\u0438"
-                        "\u0437\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0438\u043c\u0435\u044e\u0449\u0443\u044e\u0441\u044f \u0432\u044b\u0431\u043e\u0440\u043a\u0443 \u0441 \u043c\u043e\u043c\u0435\u043d\u0442\u0430\u043c\u0438 \u043d\u0430\u0441\u0442\u0443\u043f\u043b\u0435\u043d\u0438\u044f \u0441\u043e\u0431\u044b\u0442\u0438\u0439 \u0438 \u043f\u043e\u043b\u0443\u0447\u0438\u0442\u044c \u0432\u044b\u0431\u043e\u0440\u043e\u0447\u043d\u044b\u0435 \u0447\u0438\u0441\u043b\u043e\u0432\u044b\u0435 \u0445\u0430\u0440\u0430\u043a\u0442\u0435\u0440\u0438\u0441\u0442\u0438\u043a\u0438 \u0434\u043b\u044f \u0434\u043b\u0438\u043d \u0438\u043d\u0442\u0435\u0440\u0432\u0430\u043b\u043e\u0432.</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">\u041a"
-                        "\u043d\u043e\u043f\u043a\u0430 &quot;</span><span style=\" font-size:12pt; font-weight:700;\">\u041f\u043e\u0434\u043e\u0431\u0440\u0430\u0442\u044c MAP-\u043f\u043e\u0442\u043e\u043a</span><span style=\" font-size:12pt;\">&quot; \u043f\u043e\u0437\u0432\u043e\u043b\u044f\u0435\u0442 \u043f\u043e\u0434\u043e\u0431\u0440\u0430\u0442\u044c \u043f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u044b \u0434\u043b\u044f MAP-\u043f\u043e\u0442\u043e\u043a\u0430 \u0442\u0430\u043a\u0438\u043c \u043e\u0431\u0440\u0430\u0437\u043e\u043c, \u0447\u0442\u043e\u0431\u044b \u0435\u0433\u043e \u0447\u0438\u0441\u043b\u043e\u0432\u044b\u0435 \u0445\u0430\u0440\u0430\u043a\u0442\u0435\u0440\u0438\u0441\u0442\u0438\u043a\u0438 \u0434\u043b\u0438\u043d \u0438\u043d\u0442\u0435\u0440\u0432\u0430\u043b\u043e\u0432 \u0431\u044b\u043b\u0438 \u0431\u043b\u0438\u0437\u043a\u0438 \u043a \u0437\u0430\u0434\u0430\u043d\u043d\u044b\u043c.<br /></span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt"
-                        "-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">\u041a\u043d\u043e\u043f\u043a\u0430 &quot;</span><span style=\" font-size:12pt; font-weight:700;\">\u0421\u0433\u0435\u043d\u0435\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0442\u0440\u0430\u0441\u0441\u0443&quot; </span><span style=\" font-size:12pt;\">\u043f\u043e\u0437\u0432\u043e\u043b\u044f\u0435\u0442 \u0441\u0433\u0435\u043d\u0435\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432\u044b\u0431\u043e\u0440\u043a\u0443 \u0441 \u043c\u043e\u043c\u0435\u043d\u0442\u0430\u043c\u0438 \u043d\u0430\u0441\u0442\u0443\u043f\u043b\u0435\u043d\u0438\u044f \u0441\u043e\u0431\u044b\u0442\u0438\u0439 \u043f\u043e \u0437\u0430\u0434\u0430\u043d\u043d\u044b\u043c \u043f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u0430\u043c MAP-\u043f\u043e\u0442\u043e\u043a\u0430<br /><br />\u041a\u043d\u043e\u043f\u043a\u0430 &quot;</span><span style=\" font-size:12pt; font-weight:700;\">\u0421\u0440\u0430\u0432\u043d\u0438\u0442\u044c \u0434\u0432\u0435 \u0442"
-                        "\u0440\u0430\u0441\u0441\u044b&quot; </span><span style=\" font-size:12pt;\">\u043f\u043e\u0437\u0432\u043e\u043b\u044f\u0435\u0442 \u0441\u0440\u0430\u0432\u043d\u0438\u0442\u044c \u0434\u0432\u0435 \u0442\u0440\u0430\u0441\u0441\u044b \u043f\u043e \u0440\u0430\u0441\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u0438\u044e \u0447\u0438\u0441\u043b\u0430 \u0441\u043e\u0431\u044b\u0442\u0438\u0439 \u0432 \u0432\u044b\u0431\u043e\u0440\u043a\u0435</span></p></body></html>", None))
+"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt;\">\u0414\u0430\u043d\u043d\u0430\u044f \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0430 \u043f\u0440\u0435\u0434\u043d\u0430\u0437\u043d\u0430\u0447\u0435\u043d\u0430 \u0434\u043b\u044f \u043f\u043e\u0434\u0431\u043e\u0440\u0430 \u043f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u043e\u0432 MAP-\u043f\u043e\u0442\u043e\u043a\u0430. \u0414"
+                        "\u043b\u044f \u043d\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u0438 \u043f\u043e \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0435 \u043d\u0435\u043e\u0431\u0445\u043e\u0434\u0438\u043c\u043e \u043d\u0430\u0436\u0430\u0442\u044c \u043d\u0435\u043e\u0431\u0445\u043e\u0434\u0438\u043c\u044b\u0435 \u043a\u043d\u043e\u043f\u043a\u0438 \u0441\u043d\u0438\u0437\u0443.</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Microsoft JhengHei'; font-size:12pt;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt;\">\u041a\u043d\u043e\u043f\u043a\u0430 &quot;</span><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt; font-weight:700;\">\u0421\u0447\u0438\u0442\u0430\u0442\u044c \u0442\u0440\u0430\u0441\u0441\u0443</span><span style=\" font-f"
+                        "amily:'Microsoft JhengHei'; font-size:12pt;\">&quot; \u043f\u043e\u0437\u0432\u043e\u043b\u044f\u0435\u0442 \u043f\u0440\u043e\u0430\u043d\u0430\u043b\u0438\u0437\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0438\u043c\u0435\u044e\u0449\u0443\u044e\u0441\u044f \u0432\u044b\u0431\u043e\u0440\u043a\u0443 \u0441 \u043c\u043e\u043c\u0435\u043d\u0442\u0430\u043c\u0438 \u043d\u0430\u0441\u0442\u0443\u043f\u043b\u0435\u043d\u0438\u044f \u0441\u043e\u0431\u044b\u0442\u0438\u0439 \u0438 \u043f\u043e\u043b\u0443\u0447\u0438\u0442\u044c \u0432\u044b\u0431\u043e\u0440\u043e\u0447\u043d\u044b\u0435 \u0447\u0438\u0441\u043b\u043e\u0432\u044b\u0435 \u0445\u0430\u0440\u0430\u043a\u0442\u0435\u0440\u0438\u0441\u0442\u0438\u043a\u0438 \u0434\u043b\u044f \u0434\u043b\u0438\u043d \u0438\u043d\u0442\u0435\u0440\u0432\u0430\u043b\u043e\u0432.</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Microsoft JhengHei'; "
+                        "font-size:12pt;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt;\">\u041a\u043d\u043e\u043f\u043a\u0430 &quot;</span><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt; font-weight:700;\">\u041f\u043e\u0434\u043e\u0431\u0440\u0430\u0442\u044c MAP-\u043f\u043e\u0442\u043e\u043a</span><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt;\">&quot; \u043f\u043e\u0437\u0432\u043e\u043b\u044f\u0435\u0442 \u043f\u043e\u0434\u043e\u0431\u0440\u0430\u0442\u044c \u043f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u044b \u0434\u043b\u044f MAP-\u043f\u043e\u0442\u043e\u043a\u0430 \u0442\u0430\u043a\u0438\u043c \u043e\u0431\u0440\u0430\u0437\u043e\u043c, \u0447\u0442\u043e\u0431\u044b \u0435\u0433\u043e \u0447\u0438\u0441\u043b\u043e\u0432\u044b\u0435 \u0445\u0430\u0440\u0430\u043a\u0442\u0435\u0440\u0438\u0441\u0442\u0438\u043a\u0438 \u0434\u043b\u0438"
+                        "\u043d \u0438\u043d\u0442\u0435\u0440\u0432\u0430\u043b\u043e\u0432 \u0431\u044b\u043b\u0438 \u0431\u043b\u0438\u0437\u043a\u0438 \u043a \u0437\u0430\u0434\u0430\u043d\u043d\u044b\u043c.<br /></span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt;\">\u041a\u043d\u043e\u043f\u043a\u0430 &quot;</span><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt; font-weight:700;\">\u0421\u0433\u0435\u043d\u0435\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0442\u0440\u0430\u0441\u0441\u0443&quot; </span><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt;\">\u043f\u043e\u0437\u0432\u043e\u043b\u044f\u0435\u0442 \u0441\u0433\u0435\u043d\u0435\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432\u044b\u0431\u043e\u0440\u043a\u0443 \u0441 \u043c\u043e\u043c\u0435\u043d\u0442\u0430\u043c\u0438 \u043d\u0430\u0441\u0442\u0443\u043f\u043b\u0435\u043d\u0438"
+                        "\u044f \u0441\u043e\u0431\u044b\u0442\u0438\u0439 \u043f\u043e \u0437\u0430\u0434\u0430\u043d\u043d\u044b\u043c \u043f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u0430\u043c MAP-\u043f\u043e\u0442\u043e\u043a\u0430<br /><br />\u041a\u043d\u043e\u043f\u043a\u0430 &quot;</span><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt; font-weight:700;\">\u0421\u0440\u0430\u0432\u043d\u0438\u0442\u044c \u0434\u0432\u0435 \u0442\u0440\u0430\u0441\u0441\u044b&quot; </span><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt;\">\u043f\u043e\u0437\u0432\u043e\u043b\u044f\u0435\u0442 \u0441\u0440\u0430\u0432\u043d\u0438\u0442\u044c \u0434\u0432\u0435 \u0442\u0440\u0430\u0441\u0441\u044b \u043f\u043e \u0440\u0430\u0441\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u0438\u044e \u0447\u0438\u0441\u043b\u0430 \u0441\u043e\u0431\u044b\u0442\u0438\u0439 \u0432 \u0432\u044b\u0431\u043e\u0440\u043a\u0435</span></p></body></html>", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"\u0427\u0438\u0441\u043b\u043e\u0432\u044b\u0435 \u0445\u0430\u0440\u0430\u043a\u0442\u0435\u0440\u0438\u0441\u0442\u0438\u043a\u0438 \u0434\u043b\u0438\u043d \u0438\u043d\u0442\u0435\u0440\u0432\u0430\u043b\u043e\u0432 \u0442\u0440\u0430\u0441\u0441\u044b", None))
         self.textEdit.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
@@ -594,14 +709,14 @@ class Ui_MainWindow(object):
         self.btnCompareWithOrigin.setText(QCoreApplication.translate("MainWindow", u"\u0421\u0440\u0430\u0432\u043d\u0438\u0442\u044c \u0441 \u0438\u0441\u0445\u043e\u0434\u043d\u043e\u0439 \u0442\u0440\u0430\u0441\u0441\u043e\u0439", None))
         self.label_6.setText(QCoreApplication.translate("MainWindow", u"\u0420\u0430\u0437\u043c\u0435\u0440\u043d\u043e\u0441\u0442\u044c MAP", None))
         self.label_7.setText(QCoreApplication.translate("MainWindow", u"\u041c\u0430\u0442\u0440\u0438\u0446\u0430 Q", None))
-        self.matrixQ.setPlainText(QCoreApplication.translate("MainWindow", u"0 0\n"
-"0 0", None))
+        self.matrixQ.setPlainText("")
+        self.matrixQ.setPlaceholderText(QCoreApplication.translate("MainWindow", u"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u044d\u043b\u0435\u043c\u0435\u043d\u0442\u044b \u043c\u0430\u0442\u0440\u0438\u0446\u044b Q \u0431\u0435\u0437 \u043a\u0430\u043a\u0438\u0445-\u043b\u0438\u0431\u043e \u0440\u0430\u0437\u0434\u0435\u043b\u0438\u0442\u0435\u043b\u0435\u0439, \u0447\u0435\u0440\u0435\u0437 \u043f\u0440\u043e\u0431\u0435\u043b", None))
         self.label_8.setText(QCoreApplication.translate("MainWindow", u"\u0418\u043d\u0442\u0435\u043d\u0441\u0438\u0432\u043d\u043e\u0441\u0442\u0438 \u039b", None))
-        self.matrixL.setPlainText(QCoreApplication.translate("MainWindow", u"0\n"
-"0", None))
+        self.matrixL.setPlainText("")
+        self.matrixL.setPlaceholderText(QCoreApplication.translate("MainWindow", u"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u044d\u043b\u0435\u043c\u0435\u043d\u0442\u044b \u043c\u0430\u0442\u0440\u0438\u0446\u044b \u039b \u0431\u0435\u0437 \u043a\u0430\u043a\u0438\u0445-\u043b\u0438\u0431\u043e \u0440\u0430\u0437\u0434\u0435\u043b\u0438\u0442\u0435\u043b\u0435\u0439, \u0447\u0435\u0440\u0435\u0437 \u043f\u0440\u043e\u0431\u0435\u043b", None))
         self.label_9.setText(QCoreApplication.translate("MainWindow", u"\u041c\u0430\u0442\u0440\u0438\u0446\u0430 D", None))
-        self.matrixD.setPlainText(QCoreApplication.translate("MainWindow", u"0 0\n"
-"0 0", None))
+        self.matrixD.setPlainText("")
+        self.matrixD.setPlaceholderText(QCoreApplication.translate("MainWindow", u"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u044d\u043b\u0435\u043c\u0435\u043d\u0442\u044b \u043c\u0430\u0442\u0440\u0438\u0446\u044b D \u0431\u0435\u0437 \u043a\u0430\u043a\u0438\u0445-\u043b\u0438\u0431\u043e \u0440\u0430\u0437\u0434\u0435\u043b\u0438\u0442\u0435\u043b\u0435\u0439, \u0447\u0435\u0440\u0435\u0437 \u043f\u0440\u043e\u0431\u0435\u043b", None))
         self.label_10.setText(QCoreApplication.translate("MainWindow", u"\u0427\u0438\u0441\u043b\u043e \u0441\u043e\u0431\u044b\u0442\u0438\u0439", None))
         self.btnGenerate.setText(QCoreApplication.translate("MainWindow", u"\u0421\u0433\u0435\u043d\u0435\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c", None))
         self.btnLoadMap.setText(QCoreApplication.translate("MainWindow", u"\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c \u0444\u0430\u0439\u043b", None))
@@ -609,10 +724,6 @@ class Ui_MainWindow(object):
         self.btnLoadTraces.setText(QCoreApplication.translate("MainWindow", u"\u0417\u0430\u0433\u0440\u0443\u0437\u0438\u0442\u044c \u0444\u0430\u0439\u043b\u044b", None))
         self.btnCompareTraces.setText(QCoreApplication.translate("MainWindow", u"\u0421\u0440\u0430\u0432\u043d\u0438\u0442\u044c", None))
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"T:", None))
-        self.btnPageGenerate.setText(QCoreApplication.translate("MainWindow", u"\u0421\u0433\u0435\u043d\u0435\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0442\u0440\u0430\u0441\u0441\u0443", None))
-        self.btnPageSearch.setText(QCoreApplication.translate("MainWindow", u"\u041f\u043e\u0434\u043e\u0431\u0440\u0430\u0442\u044c MAP-\u043f\u043e\u0442\u043e\u043a", None))
-        self.btnPageTrace.setText(QCoreApplication.translate("MainWindow", u"\u0427\u0442\u0435\u043d\u0438\u0435 \u0442\u0440\u0430\u0441\u0441\u044b", None))
-        self.btnPageCompare.setText(QCoreApplication.translate("MainWindow", u"\u0421\u0440\u0430\u0432\u043d\u0438\u0442\u044c \u0434\u0432\u0435 \u0442\u0440\u0430\u0441\u0441\u044b", None))
         self.menu.setTitle(QCoreApplication.translate("MainWindow", u"\u0412\u0438\u0434", None))
     # retranslateUi
 
