@@ -37,16 +37,16 @@ class window(QMainWindow, Ui_MainWindow):
     def _connect_signals(self):
         # переключение страниц кнопками
         self.btnPageTrace.clicked.connect(
-            lambda: self.stackedWidget.setCurrentWidget(self.tracePage)
+            lambda: self.switch_page(self.btnPageTrace, self.tracePage)
         )
         self.btnPageSearch.clicked.connect(
-            lambda: self.stackedWidget.setCurrentWidget(self.searchPage)
+            lambda: self.switch_page(self.btnPageSearch, self.searchPage)
         )
         self.btnPageGenerate.clicked.connect(
-            lambda: self.stackedWidget.setCurrentWidget(self.genTracePage)
+            lambda: self.switch_page(self.btnPageGenerate, self.genTracePage)
         )
         self.btnPageCompare.clicked.connect(
-            lambda: self.stackedWidget.setCurrentWidget(self.comparePage)
+            lambda: self.switch_page(self.btnPageCompare, self.comparePage)
         )
         self.btnReadTrace.clicked.connect(self._load_trace)         # сигнал на открытие файла для чтения трассы
         self.checkSkew.toggled.connect(self.spinSkew.setEnabled)    # сигнал на checkbox (включить/выключить асимметрию)
@@ -63,6 +63,19 @@ class window(QMainWindow, Ui_MainWindow):
         self.btnCompareWithOrigin.clicked.connect(self.compare_with_origin) # сигнал на кнопку сравнения потока с трассой
         self.btnTranferCharacteristics.clicked.connect(self.transfer) # сигнал на кнопку для переноса характеристик над подбор
         self.processTimer.timeout.connect(self.checkProcess)        # сигнал на таймер для проверки завершения поиска
+
+    # Переключение страниц
+    def switch_page(self, button, page):
+        # сброс кнопок
+        for btn in [
+            self.btnPageTrace,
+            self.btnPageSearch,
+            self.btnPageGenerate,
+            self.btnPageCompare
+            ]:
+            btn.setChecked(False)
+        button.setChecked(True)
+        self.stackedWidget.setCurrentWidget(page)
 
     # загрузка трасс для сравнения
     def _load_traces(self):
@@ -209,17 +222,20 @@ class window(QMainWindow, Ui_MainWindow):
     def generateEvent(self):
         self.textHistory.clear()
         size = self.spinSizeMap.value()
-        q = am.np.array(parse_matrix(self.matrixQ.toPlainText(), "Q"))
-        l = am.np.array(parse_matrix(self.matrixL.toPlainText(), "Λ"))
-        d = am.np.array(parse_matrix(self.matrixD.toPlainText(), "D"))
+        try:
+            q = am.np.array(parse_matrix(self.matrixQ.toPlainText(), "Q"))
+            l = am.np.array(parse_matrix(self.matrixL.toPlainText(), "Λ"))
+            d = am.np.array(parse_matrix(self.matrixD.toPlainText(), "D"))
+            if size != len(q) or size != len(l) or size != len(d):
+                QMessageBox.warning(self, "Ошибка", "Размеры матриц не совпадают. Проверьте входные данные")
+                return
+        except:
+            return
         total_events = self.spinTotalEvents.value()
         self.progressGenerate.setMinimum(0)
         self.progressGenerate.setMaximum(total_events)
         stepProgressBar = total_events / 10
         count_events = 0
-        if size != len(q) and size != len(l) and size != len(d):
-            QMessageBox.warning(self, "Ошибка", "Размеры матриц не совпадают. Перепроверьте входные данные")
-            return
         threat = MAP(q, l, d, size)
         buffer = []
         while count_events < total_events:
@@ -349,33 +365,38 @@ def parse_matrix(text: str, m) -> list[list[float]]:
     if m == 'Λ':
         lines = text.strip().splitlines()
         matrix = [float(x) for x in lines]
+        if not matrix: 
+            QMessageBox.warning(None, "Ошибка", f"Матрица {m} пустая") 
+            return
         return matrix
-    lines = text.strip().splitlines()
 
+    lines = [line for line in text.strip().splitlines() if line.strip()]  # убираем пустые строки
     matrix = []
-    expected_cols = None
 
     for i, line in enumerate(lines, start=1):
-        if not line.strip():
-            continue  # пропуск пустых строк
-
         try:
             row = [float(x) for x in line.split()]
-        except :
-            QMessageBox.warning(title="Ошибка", text=f"Ошибка в матрице {m} в строке {i}: некорректное число")
-
-        if expected_cols is None:
-            expected_cols = len(row)
-        elif len(row) != expected_cols:
-            QMessageBox.warning(
-                title='Ошибка',
-                text=f"Ошибка в матрице {m} в строке {i}: разное количество столбцов"
-            )
+        except ValueError:
+            QMessageBox.warning(None, "Ошибка", f"Ошибка в матрице {m} в строке {i}: некорректное число")
+            return []
 
         matrix.append(row)
 
     if not matrix:
-       QMessageBox.warning(title="Ошибка", text=f"Матрица {m} пустая")
+        QMessageBox.warning(None, "Ошибка", f"Матрица {m} пустая")
+        return []
+
+    # Проверка: все строки должны иметь одинаковое количество столбцов
+    num_cols = len(matrix[0])
+    for i, row in enumerate(matrix, start=1):
+        if len(row) != num_cols:
+            QMessageBox.warning(None, "Ошибка", f"Ошибка в матрице {m}: разное количество столбцов в строке {i}")
+            return []
+
+    # Проверка квадратной матрицы
+    if len(matrix) != num_cols:
+        QMessageBox.warning(None, "Ошибка", f"Матрица {m} не квадратная")
+        return []
 
     return matrix
 
