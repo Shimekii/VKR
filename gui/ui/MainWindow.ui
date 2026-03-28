@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1089</width>
+    <width>1035</width>
     <height>823</height>
    </rect>
   </property>
@@ -264,7 +264,7 @@ QPushButton:checked {
          <string notr="true"/>
         </property>
         <property name="currentIndex">
-         <number>4</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="startPage">
          <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -575,6 +575,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
              </item>
              <item>
               <widget class="QPushButton" name="btnStartSearch">
+               <property name="toolTip">
+                <string>Запускает подбор параметров</string>
+               </property>
                <property name="text">
                 <string>Подобрать MAP-поток</string>
                </property>
@@ -582,8 +585,21 @@ li.checked::marker { content: &quot;\2612&quot;; }
              </item>
              <item>
               <widget class="QPushButton" name="btnAdditionalParameters">
+               <property name="toolTip">
+                <string>Дополнительные параметры для выбранного алгоритма</string>
+               </property>
                <property name="text">
-                <string>Дополнительные параметры</string>
+                <string>Параметры алгоритма</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btnGradientParams">
+               <property name="toolTip">
+                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;В случае неудачного поиска решения будет использоваться градиентный спуск с целью улучшения решения&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="text">
+                <string>Параметры подгонки</string>
                </property>
               </widget>
              </item>
@@ -1001,7 +1017,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1089</width>
+     <width>1035</width>
      <height>33</height>
     </rect>
    </property>
