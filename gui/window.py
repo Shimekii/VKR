@@ -3,11 +3,13 @@ from PySide6.QtCore import QTimer
 from gui.uiPy.MainWindow import Ui_MainWindow
 from gui.dialogs.dialogParameters import dialogParameters
 from gui.dialogs.dialogCompareWithTrace import dialogCompareTrace
+from gui.dialogs.dialogGradParams import gradParameters
 from gui.canvas import CDFPlot
 from core import analysisModule as am
 from core import searchModule as sm
 from core import SGD
 from core.MAP import MAP
+from core.GradDescent import Gradient
 from multiprocessing import Process, Queue
 
 class window(QMainWindow, Ui_MainWindow):
@@ -18,7 +20,9 @@ class window(QMainWindow, Ui_MainWindow):
         self.selected_method = self.comboSelectAlg.currentText()    # инициализация начального алгоритма
         self._dialogParams = None
         self._dialogView = None
+        self._dialogGrad = None
         self.extra_params = {}
+        self.gradParams = [1, False, None]      # хранятся параметры для градиентного спука для подгона (порог, используем?, параметры)
         self.cdf_plot_compare = CDFPlot(self)
         self.cdf_plot_read_trace = CDFPlot(self)
         self.verticalLayoutPlot.addWidget(self.cdf_plot_compare)
@@ -63,6 +67,7 @@ class window(QMainWindow, Ui_MainWindow):
         self.btnCompareWithOrigin.clicked.connect(self.compare_with_origin) # сигнал на кнопку сравнения потока с трассой
         self.btnTranferCharacteristics.clicked.connect(self.transfer) # сигнал на кнопку для переноса характеристик над подбор
         self.processTimer.timeout.connect(self.checkProcess)        # сигнал на таймер для проверки завершения поиска
+        self.btnGradientParams.clicked.connect(self._dialogGradParams) # сигнал на кнопку открытия параетров градиентного спуска для подгонки
 
     # Переключение страниц
     def switch_page(self, button, page):
@@ -268,7 +273,8 @@ class window(QMainWindow, Ui_MainWindow):
             self.spinSkew.value() if self.checkSkew.isChecked() else None,
             self.spinKurt.value() if self.checkKurt.isChecked() else None,
             METHODS[self.selected_method],
-            self.extra_params
+            self.extra_params,
+            self.gradParams
         )
 
         self.process = Process(
@@ -294,6 +300,7 @@ class window(QMainWindow, Ui_MainWindow):
             self._dialogParams = dialogParameters(start_page=methods[self.selected_method], parent=self)
         if self._dialogParams.exec() == QDialog.Accepted:
             self.extra_params = self._dialogParams.get_parameters()
+            self.weights = self.extra_params['weights'] if not None else [1, 1, 1, 1]
 
 
     def checkProcess(self):
@@ -325,12 +332,21 @@ class window(QMainWindow, Ui_MainWindow):
             self.tmp_L = Lambda
             self.tmp_D = D
 
+    # открывает диалоговое окно с параметрами градиентного спуска
+    def _dialogGradParams(self):
+        if self._dialogGrad is None:
+            self._dialogGrad = gradParameters()
+        if self._dialogGrad.exec() == QDialog.Accepted:
+            self.gradParams = self._dialogGrad.getParameters()
+            print(self.gradParams)
+        
+
 def _run_search_process(args, queue):
     result = searchTask(args)
     queue.put(result)
 
 def searchTask(args):
-    size, mean, cv, corr, skew, kurt, method, extra_params = args
+    size, mean, cv, corr, skew, kurt, method, extra_params, grad_params = args
 
     (Q, Lambda, D), loss = method(
         sizeMap=size,
@@ -340,6 +356,13 @@ def searchTask(args):
         kurtosisTarget=kurt,
         **extra_params
     )
+
+    threshold = grad_params[0]  # порог
+    use = grad_params[1]        # флаг использования
+    # если порог не перепрынут и стоит галочка на использование, то используем градиентный спуск
+    if grad_params[1] is not None and threshold < loss and use:
+        grad = Gradient([Q, Lambda, D], [cv, corr, skew, kurt], **grad_params[2])
+        (Q, Lambda, D), loss = grad.search()
 
     Q, Lambda, D = sm.meanMap([Q, Lambda, D], mean)
     R = am.compute_stationary_distribution(Q)
