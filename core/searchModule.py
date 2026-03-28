@@ -406,3 +406,6 @@ def recoveryQ(Q):
         Q[i][i] = -np.sum(Q[i])
     return Q
 
+
+def relativeErr(true, pred):
+    return ((true - pred) / pred) * 100

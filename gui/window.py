@@ -90,18 +90,18 @@ class window(QMainWindow, Ui_MainWindow):
 
     # сравнение трасс
     def compare_traces(self):
-            try:
-                trace1 = read_trace(self.file1)
-                trace2 = read_trace(self.file2)
-                t = self.spinTime.value()
-                counts1 = am.event_count_distribution(trace1, t)
-                counts2 = am.event_count_distribution(trace2, t)
-                v1, cdf1 = am.empirical_cdf(counts1)
-                v2, cdf2 = am.empirical_cdf(counts2)
-                ks, ksx = am.empirical_kolmogorov_distance(v1, cdf1, v2, cdf2)
-                self.cdf_plot_compare.plot(v1, cdf1, ks, ksx, v2, cdf2,)
-            except:
-                return
+        try:
+            trace1 = read_trace(self.file1)
+            trace2 = read_trace(self.file2)
+            t = self.spinTime.value()
+            counts1 = am.event_count_distribution(trace1, t)
+            counts2 = am.event_count_distribution(trace2, t)
+            v1, cdf1 = am.empirical_cdf(counts1)
+            v2, cdf2 = am.empirical_cdf(counts2)
+            ks, ksx = am.empirical_kolmogorov_distance(v1, cdf1, v2, cdf2)
+            self.cdf_plot_compare.plot(v1, cdf1, ks, ksx, v2, cdf2,)
+        except:
+            return
 
     # сравнение потока с исходной трассой
     def compare_with_origin(self):
@@ -121,13 +121,16 @@ class window(QMainWindow, Ui_MainWindow):
 
     # перенос характеристик после чтения трассы
     def transfer(self):
-        self.spinMean.setValue(self.characteristics[0])
-        self.spinCV.setValue(self.characteristics[2])
-        self.spinCorr.setValue(self.characteristics[3])
-        self.spinSkew.setValue(self.characteristics[4])
-        self.spinKurt.setValue(self.characteristics[5])
-        del self.characteristics
-        self.stackedWidget.setCurrentWidget(self.searchPage)
+        if not self.originTraceIsLoaded:
+            QMessageBox.warning(self, "Ошибка", "Загрузите трассу")
+        else:
+            self.spinMean.setValue(self.characteristics[0])
+            self.spinCV.setValue(self.characteristics[2])
+            self.spinCorr.setValue(self.characteristics[3])
+            self.spinSkew.setValue(self.characteristics[4])
+            self.spinKurt.setValue(self.characteristics[5])
+            del self.characteristics
+            self.switch_page(self.btnPageSearch, self.searchPage)
 
     
     # загрузка MAP-потока
@@ -157,11 +160,11 @@ class window(QMainWindow, Ui_MainWindow):
         if file_path:
             data = read_trace(file_path)
             if not data:
-                self.textEdit.setText("Ошибка чтения файла: файл пустой")
+                QMessageBox.critical(self, "Критическая ошибка", "Ошибка чтения файла: файл пустой")
                 return
             self.characteristics, error = am.analysis(data)
             if error:
-                self.textEdit.setText("Ошибка чтения файла:\n" + error)
+                QMessageBox.critical(self, "Критическая ошибка", "Ошибка чтения файла:\n" + error)
             else:
                 self.textEdit.setText(f"""Всего событий: {len(data)}
 Среднее: {self.characteristics[0]:.6f}
@@ -175,7 +178,7 @@ class window(QMainWindow, Ui_MainWindow):
                 v, cdf = am.empirical_cdf(self.counts)
                 self.cdf_plot_read_trace.plot(v, cdf, label1=None)
                 self.originTraceIsLoaded = True
-                del data                
+                del data
     
     # сохранение трассы в файл
     def _save_trace_to_file(self):
@@ -310,6 +313,10 @@ class window(QMainWindow, Ui_MainWindow):
                     corr=characteristics[3],
                     skew=characteristics[4],
                     kurt=characteristics[5],
+                    cvPer=sm.relativeErr(self.spinCV.value(), characteristics[2]),
+                    corrPer=sm.relativeErr(self.spinCorr.value(), characteristics[3]),
+                    skewPer=sm.relativeErr(self.spinSkew.value(), characteristics[4]),
+                    kurtPer=sm.relativeErr(self.spinKurt.value(), characteristics[5]),
                     R=R.round(4),
                     loss=loss
                 )
@@ -317,7 +324,6 @@ class window(QMainWindow, Ui_MainWindow):
             self.tmp_Q = Q
             self.tmp_L = Lambda
             self.tmp_D = D
-
 
 def _run_search_process(args, queue):
     result = searchTask(args)
@@ -411,9 +417,9 @@ INFO_TEMPLATE="""Получившиеся числовые характерис�
 
 Среднее: {mean:.4f}
 Дисперсия: {var:.4f}
-Коэффициент вариации: {cv}
-Коэффициент корреляции: {corr}
-Коэффициент асимметрии: {skew}
-Коэффициент эксцесса: {kurt}
+Коэффициент вариации: {cv} (погрешность {cvPer:.2f}%)
+Коэффициент корреляции: {corr} (погрешность {corrPer:.2f}%)
+Коэффициент асимметрии: {skew} (погрешность {skewPer:.2f}%)
+Коэффициент эксцесса: {kurt} (погрешность {kurtPer:.2f}%)
 Стационарное распределение вероятностей: {R}
 """
