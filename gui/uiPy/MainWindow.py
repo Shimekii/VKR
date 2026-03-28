@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1035, 823)
+        MainWindow.resize(1089, 823)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -74,10 +74,7 @@ class Ui_MainWindow(object):
         self.buttons.setObjectName(u"buttons")
         self.verticalLayout_4 = QVBoxLayout(self.buttons)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.splitter = QSplitter(self.buttons)
-        self.splitter.setObjectName(u"splitter")
-        self.splitter.setOrientation(Qt.Orientation.Vertical)
-        self.btnPageTrace = QPushButton(self.splitter)
+        self.btnPageTrace = QPushButton(self.buttons)
         self.btnPageTrace.setObjectName(u"btnPageTrace")
         font2 = QFont()
         font2.setFamilies([u"Microsoft JhengHei"])
@@ -104,56 +101,15 @@ class Ui_MainWindow(object):
         self.btnPageTrace.setCheckable(True)
         self.btnPageTrace.setChecked(False)
         self.btnPageTrace.setAutoExclusive(False)
-        self.splitter.addWidget(self.btnPageTrace)
-        self.btnPageCompare = QPushButton(self.splitter)
-        self.btnPageCompare.setObjectName(u"btnPageCompare")
+
+        self.verticalLayout_4.addWidget(self.btnPageTrace)
+
+        self.btnPageSearch = QPushButton(self.buttons)
+        self.btnPageSearch.setObjectName(u"btnPageSearch")
         font3 = QFont()
         font3.setFamilies([u"Microsoft JhengHei"])
         font3.setPointSize(11)
         font3.setBold(False)
-        self.btnPageCompare.setFont(font3)
-        self.btnPageCompare.setStyleSheet(u"QPushButton {\n"
-"    text-align: left;\n"
-"    border-radius: 6px;\n"
-"    padding: 4px;\n"
-"    padding-right: 15px;\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    background-color: palette(mid);\n"
-"}\n"
-"\n"
-"QPushButton:checked {\n"
-"    background-color: palette(highlight);\n"
-"    color: palette(highlighted-text);\n"
-"}")
-        self.btnPageCompare.setCheckable(True)
-        self.splitter.addWidget(self.btnPageCompare)
-        self.splitter_2 = QSplitter(self.splitter)
-        self.splitter_2.setObjectName(u"splitter_2")
-        self.splitter_2.setOrientation(Qt.Orientation.Vertical)
-        self.btnPageGenerate = QPushButton(self.splitter_2)
-        self.btnPageGenerate.setObjectName(u"btnPageGenerate")
-        self.btnPageGenerate.setFont(font3)
-        self.btnPageGenerate.setStyleSheet(u"QPushButton {\n"
-"    text-align: left;\n"
-"    border-radius: 6px;\n"
-"    padding: 4px;\n"
-"    padding-right: 15px;\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    background-color: palette(mid);\n"
-"}\n"
-"\n"
-"QPushButton:checked {\n"
-"    background-color: palette(highlight);\n"
-"    color: palette(highlighted-text);\n"
-"}")
-        self.btnPageGenerate.setCheckable(True)
-        self.splitter_2.addWidget(self.btnPageGenerate)
-        self.btnPageSearch = QPushButton(self.splitter_2)
-        self.btnPageSearch.setObjectName(u"btnPageSearch")
         self.btnPageSearch.setFont(font3)
         self.btnPageSearch.setAcceptDrops(False)
         self.btnPageSearch.setAutoFillBackground(False)
@@ -176,13 +132,62 @@ class Ui_MainWindow(object):
         self.btnPageSearch.setChecked(False)
         self.btnPageSearch.setAutoDefault(False)
         self.btnPageSearch.setFlat(False)
-        self.splitter_2.addWidget(self.btnPageSearch)
-        self.splitter.addWidget(self.splitter_2)
 
-        self.verticalLayout_4.addWidget(self.splitter)
+        self.verticalLayout_4.addWidget(self.btnPageSearch)
+
+        self.btnPageGenerate = QPushButton(self.buttons)
+        self.btnPageGenerate.setObjectName(u"btnPageGenerate")
+        self.btnPageGenerate.setFont(font3)
+        self.btnPageGenerate.setStyleSheet(u"QPushButton {\n"
+"    text-align: left;\n"
+"    border-radius: 6px;\n"
+"    padding: 4px;\n"
+"    padding-right: 15px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: palette(mid);\n"
+"}\n"
+"\n"
+"QPushButton:checked {\n"
+"    background-color: palette(highlight);\n"
+"    color: palette(highlighted-text);\n"
+"}")
+        self.btnPageGenerate.setCheckable(True)
+
+        self.verticalLayout_4.addWidget(self.btnPageGenerate)
+
+        self.btnPageCompare = QPushButton(self.buttons)
+        self.btnPageCompare.setObjectName(u"btnPageCompare")
+        self.btnPageCompare.setFont(font3)
+        self.btnPageCompare.setStyleSheet(u"QPushButton {\n"
+"    text-align: left;\n"
+"    border-radius: 6px;\n"
+"    padding: 4px;\n"
+"    padding-right: 15px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: palette(mid);\n"
+"}\n"
+"\n"
+"QPushButton:checked {\n"
+"    background-color: palette(highlight);\n"
+"    color: palette(highlighted-text);\n"
+"}")
+        self.btnPageCompare.setCheckable(True)
+
+        self.verticalLayout_4.addWidget(self.btnPageCompare)
 
 
         self.horizontalLayout_5.addWidget(self.buttons, 0, Qt.AlignmentFlag.AlignTop)
+
+        self.line_2 = QFrame(self.centralwidget)
+        self.line_2.setObjectName(u"line_2")
+        self.line_2.setFrameShape(QFrame.Shape.VLine)
+        self.line_2.setFrameShadow(QFrame.Shadow.Sunken)
+
+        self.horizontalLayout_5.addWidget(self.line_2)
 
         self.stackedWidget = QStackedWidget(self.centralwidget)
         self.stackedWidget.setObjectName(u"stackedWidget")
@@ -616,7 +621,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
         self.menuBar = QMenuBar(MainWindow)
         self.menuBar.setObjectName(u"menuBar")
-        self.menuBar.setGeometry(QRect(0, 0, 1035, 33))
+        self.menuBar.setGeometry(QRect(0, 0, 1089, 33))
         font8 = QFont()
         font8.setFamilies([u"Microsoft JhengHei"])
         font8.setPointSize(9)
@@ -634,7 +639,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         self.btnPageSearch.setDefault(False)
-        self.stackedWidget.setCurrentIndex(3)
+        self.stackedWidget.setCurrentIndex(4)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -646,27 +651,27 @@ class Ui_MainWindow(object):
         self.darkTheme.setText(QCoreApplication.translate("MainWindow", u"\u0422\u0435\u043c\u043d\u0430\u044f \u0442\u0435\u043c\u0430", None))
         self.title.setText(QCoreApplication.translate("MainWindow", u"\u041f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0430 \u0434\u043b\u044f \u043f\u043e\u0434\u0431\u043e\u0440\u0430 \u043f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u043e\u0432 MAP-\u043f\u043e\u0442\u043e\u043a\u0430", None))
         self.btnPageTrace.setText(QCoreApplication.translate("MainWindow", u"\u0427\u0442\u0435\u043d\u0438\u0435 \u0442\u0440\u0430\u0441\u0441\u044b", None))
-        self.btnPageCompare.setText(QCoreApplication.translate("MainWindow", u"\u0421\u0440\u0430\u0432\u043d\u0438\u0442\u044c \u0434\u0432\u0435 \u0442\u0440\u0430\u0441\u0441\u044b", None))
-        self.btnPageGenerate.setText(QCoreApplication.translate("MainWindow", u"\u0421\u0433\u0435\u043d\u0435\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0442\u0440\u0430\u0441\u0441\u0443", None))
         self.btnPageSearch.setText(QCoreApplication.translate("MainWindow", u"\u041f\u043e\u0434\u043e\u0431\u0440\u0430\u0442\u044c MAP-\u043f\u043e\u0442\u043e\u043a", None))
+        self.btnPageGenerate.setText(QCoreApplication.translate("MainWindow", u"\u0421\u0433\u0435\u043d\u0435\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0442\u0440\u0430\u0441\u0441\u0443", None))
+        self.btnPageCompare.setText(QCoreApplication.translate("MainWindow", u"\u0421\u0440\u0430\u0432\u043d\u0438\u0442\u044c \u0434\u0432\u0435 \u0442\u0440\u0430\u0441\u0441\u044b", None))
         self.textBrowser.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "hr { height: 1px; border-width: 0; }\n"
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
-"</style></head><body style=\" font-family:'Segoe UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt;\">\u0414\u0430\u043d\u043d\u0430\u044f \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0430 \u043f\u0440\u0435\u0434\u043d\u0430\u0437\u043d\u0430\u0447\u0435\u043d\u0430 \u0434\u043b\u044f \u043f\u043e\u0434\u0431\u043e\u0440\u0430 \u043f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u043e\u0432 MAP-\u043f\u043e\u0442\u043e\u043a\u0430. \u0414"
-                        "\u043b\u044f \u043d\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u0438 \u043f\u043e \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0435 \u043d\u0435\u043e\u0431\u0445\u043e\u0434\u0438\u043c\u043e \u043d\u0430\u0436\u0430\u0442\u044c \u043d\u0435\u043e\u0431\u0445\u043e\u0434\u0438\u043c\u044b\u0435 \u043a\u043d\u043e\u043f\u043a\u0438 \u0441\u043d\u0438\u0437\u0443.</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Microsoft JhengHei'; font-size:12pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt;\">\u041a\u043d\u043e\u043f\u043a\u0430 &quot;</span><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt; font-weight:700;\">\u0421\u0447\u0438\u0442\u0430\u0442\u044c \u0442\u0440\u0430\u0441\u0441\u0443</span><span style=\" font-f"
-                        "amily:'Microsoft JhengHei'; font-size:12pt;\">&quot; \u043f\u043e\u0437\u0432\u043e\u043b\u044f\u0435\u0442 \u043f\u0440\u043e\u0430\u043d\u0430\u043b\u0438\u0437\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0438\u043c\u0435\u044e\u0449\u0443\u044e\u0441\u044f \u0432\u044b\u0431\u043e\u0440\u043a\u0443 \u0441 \u043c\u043e\u043c\u0435\u043d\u0442\u0430\u043c\u0438 \u043d\u0430\u0441\u0442\u0443\u043f\u043b\u0435\u043d\u0438\u044f \u0441\u043e\u0431\u044b\u0442\u0438\u0439 \u0438 \u043f\u043e\u043b\u0443\u0447\u0438\u0442\u044c \u0432\u044b\u0431\u043e\u0440\u043e\u0447\u043d\u044b\u0435 \u0447\u0438\u0441\u043b\u043e\u0432\u044b\u0435 \u0445\u0430\u0440\u0430\u043a\u0442\u0435\u0440\u0438\u0441\u0442\u0438\u043a\u0438 \u0434\u043b\u044f \u0434\u043b\u0438\u043d \u0438\u043d\u0442\u0435\u0440\u0432\u0430\u043b\u043e\u0432.</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Microsoft JhengHei'; "
-                        "font-size:12pt;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt;\">\u041a\u043d\u043e\u043f\u043a\u0430 &quot;</span><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt; font-weight:700;\">\u041f\u043e\u0434\u043e\u0431\u0440\u0430\u0442\u044c MAP-\u043f\u043e\u0442\u043e\u043a</span><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt;\">&quot; \u043f\u043e\u0437\u0432\u043e\u043b\u044f\u0435\u0442 \u043f\u043e\u0434\u043e\u0431\u0440\u0430\u0442\u044c \u043f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u044b \u0434\u043b\u044f MAP-\u043f\u043e\u0442\u043e\u043a\u0430 \u0442\u0430\u043a\u0438\u043c \u043e\u0431\u0440\u0430\u0437\u043e\u043c, \u0447\u0442\u043e\u0431\u044b \u0435\u0433\u043e \u0447\u0438\u0441\u043b\u043e\u0432\u044b\u0435 \u0445\u0430\u0440\u0430\u043a\u0442\u0435\u0440\u0438\u0441\u0442\u0438\u043a\u0438 \u0434\u043b\u0438"
-                        "\u043d \u0438\u043d\u0442\u0435\u0440\u0432\u0430\u043b\u043e\u0432 \u0431\u044b\u043b\u0438 \u0431\u043b\u0438\u0437\u043a\u0438 \u043a \u0437\u0430\u0434\u0430\u043d\u043d\u044b\u043c.<br /></span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt;\">\u041a\u043d\u043e\u043f\u043a\u0430 &quot;</span><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt; font-weight:700;\">\u0421\u0433\u0435\u043d\u0435\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0442\u0440\u0430\u0441\u0441\u0443&quot; </span><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt;\">\u043f\u043e\u0437\u0432\u043e\u043b\u044f\u0435\u0442 \u0441\u0433\u0435\u043d\u0435\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432\u044b\u0431\u043e\u0440\u043a\u0443 \u0441 \u043c\u043e\u043c\u0435\u043d\u0442\u0430\u043c\u0438 \u043d\u0430\u0441\u0442\u0443\u043f\u043b\u0435\u043d\u0438"
-                        "\u044f \u0441\u043e\u0431\u044b\u0442\u0438\u0439 \u043f\u043e \u0437\u0430\u0434\u0430\u043d\u043d\u044b\u043c \u043f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u0430\u043c MAP-\u043f\u043e\u0442\u043e\u043a\u0430<br /><br />\u041a\u043d\u043e\u043f\u043a\u0430 &quot;</span><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt; font-weight:700;\">\u0421\u0440\u0430\u0432\u043d\u0438\u0442\u044c \u0434\u0432\u0435 \u0442\u0440\u0430\u0441\u0441\u044b&quot; </span><span style=\" font-family:'Microsoft JhengHei'; font-size:12pt;\">\u043f\u043e\u0437\u0432\u043e\u043b\u044f\u0435\u0442 \u0441\u0440\u0430\u0432\u043d\u0438\u0442\u044c \u0434\u0432\u0435 \u0442\u0440\u0430\u0441\u0441\u044b \u043f\u043e \u0440\u0430\u0441\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u0438\u044e \u0447\u0438\u0441\u043b\u0430 \u0441\u043e\u0431\u044b\u0442\u0438\u0439 \u0432 \u0432\u044b\u0431\u043e\u0440\u043a\u0435</span></p></body></html>", None))
+"</style></head><body style=\" font-family:'Microsoft JhengHei'; font-size:10pt; font-weight:400; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">\u0414\u0430\u043d\u043d\u0430\u044f \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0430 \u043f\u0440\u0435\u0434\u043d\u0430\u0437\u043d\u0430\u0447\u0435\u043d\u0430 \u0434\u043b\u044f \u043f\u043e\u0434\u0431\u043e\u0440\u0430 \u043f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u043e\u0432 MAP-\u043f\u043e\u0442\u043e\u043a\u0430. \u0414\u043b\u044f \u043d"
+                        "\u0430\u0432\u0438\u0433\u0430\u0446\u0438\u0438 \u043f\u043e \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0435 \u043d\u0435\u043e\u0431\u0445\u043e\u0434\u0438\u043c\u043e \u043d\u0430\u0436\u0430\u0442\u044c \u043d\u0435\u043e\u0431\u0445\u043e\u0434\u0438\u043c\u044b\u0435 \u043a\u043d\u043e\u043f\u043a\u0438 \u0441\u043d\u0438\u0437\u0443.</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">\u041a\u043d\u043e\u043f\u043a\u0430 &quot;</span><span style=\" font-size:12pt; font-weight:700;\">\u0421\u0447\u0438\u0442\u0430\u0442\u044c \u0442\u0440\u0430\u0441\u0441\u0443</span><span style=\" font-size:12pt;\">&quot; \u043f\u043e\u0437\u0432\u043e\u043b\u044f\u0435\u0442 \u043f\u0440\u043e\u0430\u043d\u0430\u043b\u0438"
+                        "\u0437\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0438\u043c\u0435\u044e\u0449\u0443\u044e\u0441\u044f \u0432\u044b\u0431\u043e\u0440\u043a\u0443 \u0441 \u043c\u043e\u043c\u0435\u043d\u0442\u0430\u043c\u0438 \u043d\u0430\u0441\u0442\u0443\u043f\u043b\u0435\u043d\u0438\u044f \u0441\u043e\u0431\u044b\u0442\u0438\u0439 \u0438 \u043f\u043e\u043b\u0443\u0447\u0438\u0442\u044c \u0432\u044b\u0431\u043e\u0440\u043e\u0447\u043d\u044b\u0435 \u0447\u0438\u0441\u043b\u043e\u0432\u044b\u0435 \u0445\u0430\u0440\u0430\u043a\u0442\u0435\u0440\u0438\u0441\u0442\u0438\u043a\u0438 \u0434\u043b\u044f \u0434\u043b\u0438\u043d \u0438\u043d\u0442\u0435\u0440\u0432\u0430\u043b\u043e\u0432.</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">\u041a"
+                        "\u043d\u043e\u043f\u043a\u0430 &quot;</span><span style=\" font-size:12pt; font-weight:700;\">\u041f\u043e\u0434\u043e\u0431\u0440\u0430\u0442\u044c MAP-\u043f\u043e\u0442\u043e\u043a</span><span style=\" font-size:12pt;\">&quot; \u043f\u043e\u0437\u0432\u043e\u043b\u044f\u0435\u0442 \u043f\u043e\u0434\u043e\u0431\u0440\u0430\u0442\u044c \u043f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u044b \u0434\u043b\u044f MAP-\u043f\u043e\u0442\u043e\u043a\u0430 \u0442\u0430\u043a\u0438\u043c \u043e\u0431\u0440\u0430\u0437\u043e\u043c, \u0447\u0442\u043e\u0431\u044b \u0435\u0433\u043e \u0447\u0438\u0441\u043b\u043e\u0432\u044b\u0435 \u0445\u0430\u0440\u0430\u043a\u0442\u0435\u0440\u0438\u0441\u0442\u0438\u043a\u0438 \u0434\u043b\u0438\u043d \u0438\u043d\u0442\u0435\u0440\u0432\u0430\u043b\u043e\u0432 \u0431\u044b\u043b\u0438 \u0431\u043b\u0438\u0437\u043a\u0438 \u043a \u0437\u0430\u0434\u0430\u043d\u043d\u044b\u043c.<br /></span></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt"
+                        "-block-indent:0; text-indent:0px;\"><span style=\" font-size:12pt;\">\u041a\u043d\u043e\u043f\u043a\u0430 &quot;</span><span style=\" font-size:12pt; font-weight:700;\">\u0421\u0433\u0435\u043d\u0435\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0442\u0440\u0430\u0441\u0441\u0443&quot; </span><span style=\" font-size:12pt;\">\u043f\u043e\u0437\u0432\u043e\u043b\u044f\u0435\u0442 \u0441\u0433\u0435\u043d\u0435\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0432\u044b\u0431\u043e\u0440\u043a\u0443 \u0441 \u043c\u043e\u043c\u0435\u043d\u0442\u0430\u043c\u0438 \u043d\u0430\u0441\u0442\u0443\u043f\u043b\u0435\u043d\u0438\u044f \u0441\u043e\u0431\u044b\u0442\u0438\u0439 \u043f\u043e \u0437\u0430\u0434\u0430\u043d\u043d\u044b\u043c \u043f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u0430\u043c MAP-\u043f\u043e\u0442\u043e\u043a\u0430<br /><br />\u041a\u043d\u043e\u043f\u043a\u0430 &quot;</span><span style=\" font-size:12pt; font-weight:700;\">\u0421\u0440\u0430\u0432\u043d\u0438\u0442\u044c \u0434\u0432\u0435 \u0442"
+                        "\u0440\u0430\u0441\u0441\u044b&quot; </span><span style=\" font-size:12pt;\">\u043f\u043e\u0437\u0432\u043e\u043b\u044f\u0435\u0442 \u0441\u0440\u0430\u0432\u043d\u0438\u0442\u044c \u0434\u0432\u0435 \u0442\u0440\u0430\u0441\u0441\u044b \u043f\u043e \u0440\u0430\u0441\u043f\u0440\u0435\u0434\u0435\u043b\u0435\u043d\u0438\u044e \u0447\u0438\u0441\u043b\u0430 \u0441\u043e\u0431\u044b\u0442\u0438\u0439 \u0432 \u0432\u044b\u0431\u043e\u0440\u043a\u0435</span></p></body></html>", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"\u0427\u0438\u0441\u043b\u043e\u0432\u044b\u0435 \u0445\u0430\u0440\u0430\u043a\u0442\u0435\u0440\u0438\u0441\u0442\u0438\u043a\u0438 \u0434\u043b\u0438\u043d \u0438\u043d\u0442\u0435\u0440\u0432\u0430\u043b\u043e\u0432 \u0442\u0440\u0430\u0441\u0441\u044b", None))
         self.textEdit.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
