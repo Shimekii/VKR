@@ -10,7 +10,7 @@ from core import searchModule as sm
 from core import SGD
 from core.MAP import MAP
 from core.GradDescent import Gradient
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, Event
 
 class window(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -29,6 +29,9 @@ class window(QMainWindow, Ui_MainWindow):
         self.verticalLayoutPlotInReadTrace.addWidget(self.cdf_plot_read_trace)
         self.originTraceIsLoaded = False
         self.processTimer = QTimer(self)
+        self.processStarted = False
+        self.stop_event = Event()
+        self.process = None
         self._connect_signals()
     
 
@@ -228,65 +231,117 @@ class window(QMainWindow, Ui_MainWindow):
 
     # генерация событий
     def generateEvent(self):
-        self.textHistory.clear()
-        size = self.spinSizeMap.value()
-        try:
-            q = am.np.array(parse_matrix(self.matrixQ.toPlainText(), "Q"))
-            l = am.np.array(parse_matrix(self.matrixL.toPlainText(), "Λ"))
-            d = am.np.array(parse_matrix(self.matrixD.toPlainText(), "D"))
-            if size != len(q) or size != len(l) or size != len(d):
-                QMessageBox.warning(self, "Ошибка", "Размеры матриц не совпадают. Проверьте входные данные")
+        if not self.processStarted:
+            self.processStarted = True
+            self.textHistory.clear()
+            size = self.spinSizeMap.value()
+            try:
+                q = am.np.array(parse_matrix(self.matrixQ.toPlainText(), "Q"))
+                l = am.np.array(parse_matrix(self.matrixL.toPlainText(), "Λ"))
+                d = am.np.array(parse_matrix(self.matrixD.toPlainText(), "D"))
+                if size != len(q) or size != len(l) or size != len(d):
+                    QMessageBox.warning(self, "Ошибка", "Размеры матриц не совпадают. Проверьте входные данные")
+                    return
+            except:
                 return
-        except:
-            return
-        total_events = self.spinTotalEvents.value()
-        self.progressGenerate.setMinimum(0)
-        self.progressGenerate.setMaximum(total_events)
-        stepProgressBar = total_events / 10
-        count_events = 0
-        threat = MAP(q, l, d, size)
+            total_events = self.spinTotalEvents.value()
+            self.progressGenerate.setMaximum(total_events)
+            self.btnGenerate.setText("Отмена")
+            self.start_generation(q, l, d, size, total_events)
+        else:
+            self.processStarted = False
+            self.cancel_generation()
+            self.btnGenerate.setText("Сгенерировать")
+
+        
+
+
+    # старт процесса с имитационной моделью
+    def start_generation(self, q, l, d, size, total_events):
+        self.stop_event.clear()
+        self.queue = Queue()
+
+        self.process = Process(
+            target=generate_worker,
+            args=(q, l, d, size, total_events, self.stop_event, self.queue)
+        )
+        self.process.start()
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.updateBar)
+        self.timer.start(100)
+
+    def cancel_generation(self):
+        if self.process and self.process.is_alive():
+            self.stop_event.set()
+
+            self.process.join(timeout=1)
+
+            if self.process.is_alive():
+                self.process.terminate()
+                self.process.join()
+        self.timer.stop()
+
+
+    # обновление прогресс-бара в генераторе событий
+    def updateBar(self):
         buffer = []
-        while count_events < total_events:
-            events = threat.step()
-            if events[0] == "event":
-                buffer.append(f'{events[1]:6f}\n')
-                count_events += 1
-            elif events[0] == "transition" and events[4] == True:
-                buffer.append(f'{events[3]:6f}\n')
-                count_events += 1
-            if count_events % stepProgressBar == 0:
-                self.progressGenerate.setValue(count_events)
-                self.textHistory.insertPlainText(''.join(buffer))
-                buffer.clear()
-                QApplication.processEvents()
+        last_progress = None
+
+        while not self.queue.empty():
+
+            msg = self.queue.get()
+            if msg[0] == 'batch':
+                values, count = msg[1], msg[2]
+                buffer.extend(f"{v:6f}\n" for v in values)
+                last_progress = count
+
+        # обновляем отображение лога событий
         if buffer:
             self.textHistory.insertPlainText(''.join(buffer))
 
+        # обновляем прогресс-бар
+        if last_progress is not None:
+            self.progressGenerate.setValue(last_progress)
+
+        if last_progress == self.progressGenerate.value():
+            self.btnGenerate.setText("Сгенерировать")
+
+
     # запуск поиска
     def start_search(self):
-        self.queue = Queue()
-        args = (
-            self.spinSize.value(),
-            self.spinMean.value(),
-            self.spinCV.value(),
-            self.spinCorr.value(),
-            self.spinSkew.value() if self.checkSkew.isChecked() else None,
-            self.spinKurt.value() if self.checkKurt.isChecked() else None,
-            METHODS[self.selected_method],
-            self.extra_params,
-            self.gradParams
-        )
+        if not self.processStarted:
+            self.processStarted = True
+            self.btnStartSearch.setText("Отмена")
+            self.queue = Queue()
+            args = (
+                self.spinSize.value(),
+                self.spinMean.value(),
+                self.spinCV.value(),
+                self.spinCorr.value(),
+                self.spinSkew.value() if self.checkSkew.isChecked() else None,
+                self.spinKurt.value() if self.checkKurt.isChecked() else None,
+                METHODS[self.selected_method],
+                self.extra_params,
+                self.gradParams
+            )
 
-        self.process = Process(
-            target=_run_search_process,
-            args=(args, self.queue)
-        )
+            self.process = Process(
+                target=_run_search_process,
+                args=(args, self.queue)
+            )
 
-        self.process.start()
-        self.processTimer.start(100)
+            self.process.start()
+            self.processTimer.start(100)
 
-        self.progressSearch.setMaximum(0)
-        self.progressTimer = QTimer(self)
+            self.progressSearch.setMaximum(0)
+            self.progressTimer = QTimer(self)
+        else:
+            self.process.terminate()
+            self.progressSearch.setMaximum(1)
+            self.progressSearch.setValue(1)
+            self.processStarted = False
+            self.btnStartSearch.setText("Подобрать MAP-поток")
 
 
     # открывает диалоговое окно с доп.параметрами
@@ -331,6 +386,8 @@ class window(QMainWindow, Ui_MainWindow):
             self.tmp_Q = Q
             self.tmp_L = Lambda
             self.tmp_D = D
+            self.btnStartSearch.setText("Подобрать MAP-поток")
+            self.processStarted = False
 
     # открывает диалоговое окно с параметрами градиентного спуска
     def _dialogGradParams(self):
@@ -428,6 +485,30 @@ def parse_matrix(text: str, m) -> list[list[float]]:
         return []
 
     return matrix
+
+def generate_worker(q, l, d, size, total_events, stop_event, queue):
+    threat = MAP(q, l, d, size)
+    count_events = 0
+    batch_size = total_events / 10
+    buffer = []
+    while count_events < total_events:
+        if stop_event.is_set():
+            return
+        
+        events = threat.step()
+        if events[0] == "event":
+            count_events += 1
+            buffer.append(events[1])
+        elif events[0] == "transition" and events[4]:
+            count_events += 1
+            buffer.append(events[3])
+
+        if len(buffer) >= batch_size:
+            queue.put(("batch", buffer.copy(), count_events))
+            buffer.clear()
+
+    if buffer:
+        queue.put(("batch", buffer, count_events))
 
 METHODS = {
     "Последовательный перебор": sm.brute_force_search,
