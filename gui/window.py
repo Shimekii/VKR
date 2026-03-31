@@ -271,6 +271,7 @@ class window(QMainWindow, Ui_MainWindow):
         self.timer.timeout.connect(self.updateBar)
         self.timer.start(100)
 
+    # функция остановки генерации
     def cancel_generation(self):
         if self.process and self.process.is_alive():
             self.stop_event.set()
@@ -304,6 +305,7 @@ class window(QMainWindow, Ui_MainWindow):
         if last_progress is not None:
             self.progressGenerate.setValue(last_progress)
 
+        # при завершении генерации меняется название кнопки
         if last_progress == self.progressGenerate.maximum():
             self.btnGenerate.setText("Сгенерировать")
             self.processStarted = False
@@ -341,6 +343,7 @@ class window(QMainWindow, Ui_MainWindow):
             self.process.terminate()
             self.progressSearch.setMaximum(1)
             self.progressSearch.setValue(1)
+            self.processTimer.stop()
             self.processStarted = False
             self.btnStartSearch.setText("Подобрать MAP-поток")
 
@@ -358,7 +361,7 @@ class window(QMainWindow, Ui_MainWindow):
             self.extra_params = self._dialogParams.get_parameters()
             self.weights = self.extra_params['weights'] if not None else [1, 1, 1, 1]
 
-
+    # Обновление результатов поиска параметров
     def checkProcess(self):
         if not self.queue.empty():
             Q, Lambda, D, R, characteristics, loss = self.queue.get()
@@ -403,6 +406,7 @@ def _run_search_process(args, queue):
     result = searchTask(args)
     queue.put(result)
 
+# задача для отдельного потока с поиском параметров
 def searchTask(args):
     size, mean, cv, corr, skew, kurt, method, extra_params, grad_params = args
 
@@ -487,6 +491,7 @@ def parse_matrix(text: str, m) -> list[list[float]]:
 
     return matrix
 
+# генератор событий
 def generate_worker(q, l, d, size, total_events, stop_event, queue):
     threat = MAP(q, l, d, size)
     count_events = 0
