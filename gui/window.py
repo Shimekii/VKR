@@ -232,7 +232,6 @@ class window(QMainWindow, Ui_MainWindow):
     # генерация событий
     def generateEvent(self):
         if not self.processStarted:
-            self.processStarted = True
             self.textHistory.clear()
             size = self.spinSizeMap.value()
             try:
@@ -247,6 +246,7 @@ class window(QMainWindow, Ui_MainWindow):
             total_events = self.spinTotalEvents.value()
             self.progressGenerate.setMaximum(total_events)
             self.btnGenerate.setText("Отмена")
+            self.processStarted = True
             self.start_generation(q, l, d, size, total_events)
         else:
             self.processStarted = False
@@ -304,8 +304,9 @@ class window(QMainWindow, Ui_MainWindow):
         if last_progress is not None:
             self.progressGenerate.setValue(last_progress)
 
-        if last_progress == self.progressGenerate.value():
+        if last_progress == self.progressGenerate.maximum():
             self.btnGenerate.setText("Сгенерировать")
+            self.processStarted = False
 
 
     # запуск поиска
