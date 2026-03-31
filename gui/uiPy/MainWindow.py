@@ -300,7 +300,7 @@ class Ui_MainWindow(object):
         self.spinSize = QSpinBox(self.groupBox)
         self.spinSize.setObjectName(u"spinSize")
         self.spinSize.setMinimum(2)
-        self.spinSize.setMaximum(4)
+        self.spinSize.setMaximum(5)
 
         self.verticalLayout_3.addWidget(self.spinSize)
 
