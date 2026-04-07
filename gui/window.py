@@ -73,8 +73,14 @@ class window(QMainWindow, Ui_MainWindow):
         self.btnTranferCharacteristics.clicked.connect(self.transfer) # сигнал на кнопку для переноса характеристик над подбор
         self.processTimer.timeout.connect(self.checkProcess)        # сигнал на таймер для проверки завершения поиска
         self.btnGradientParams.clicked.connect(self._dialogGradParams) # сигнал на кнопку открытия параетров градиентного спуска для подгонки
-        self.lightTheme.triggered.connect(lambda: ThemeService.set_theme('light'))
-        self.darkTheme.triggered.connect(lambda: ThemeService.set_theme('dark'))
+        self.lightTheme.triggered.connect(lambda: self.update_theme('light'))
+        self.darkTheme.triggered.connect(lambda: self.update_theme('dark'))
+
+    # обновление темы и графиков
+    def update_theme(self, theme):
+        ThemeService.set_theme(theme)
+        self.cdf_plot_compare.apply_theme()
+        self.cdf_plot_read_trace.apply_theme()
 
     # Переключение страниц
     def switch_page(self, button, page):
