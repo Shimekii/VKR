@@ -5,12 +5,13 @@ from gui.dialogs.dialogParameters import dialogParameters
 from gui.dialogs.dialogCompareWithTrace import dialogCompareTrace
 from gui.dialogs.dialogGradParams import gradParameters
 from gui.canvas import CDFPlot
-from core import analysisModule as am
-from core import searchModule as sm
-from core import SGD
-from core.MAP import MAP
-from core.GradDescent import Gradient
+from core.analysis import analysis
+from core.map.MAP import MAP
 from multiprocessing import Process, Queue, Event
+from services.search_service import search_run
+from services.io_service import info_text, read_trace
+from services.io_service import parse_matrix
+from services.simulation_service import start_generation_service
 
 class window(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -102,14 +103,18 @@ class window(QMainWindow, Ui_MainWindow):
             trace1 = read_trace(self.file1)
             trace2 = read_trace(self.file2)
             t = self.spinTime.value()
-            counts1 = am.event_count_distribution(trace1, t)
-            counts2 = am.event_count_distribution(trace2, t)
-            v1, cdf1 = am.empirical_cdf(counts1)
-            v2, cdf2 = am.empirical_cdf(counts2)
-            ks, ksx = am.empirical_kolmogorov_distance(v1, cdf1, v2, cdf2)
+            counts1 = analysis.event_count_distribution(trace1, t)
+            counts2 = analysis.event_count_distribution(trace2, t)
+            v1, cdf1 = analysis.empirical_cdf(counts1)
+            v2, cdf2 = analysis.empirical_cdf(counts2)
+            ks, ksx = analysis.empirical_kolmogorov_distance(v1, cdf1, v2, cdf2)
             self.cdf_plot_compare.plot(v1, cdf1, ks, ksx, v2, cdf2,)
-        except:
-            return
+        except Exception as e:
+            QMessageBox.warning(
+                self,
+                'Ошибка',
+                f'Ошибка чтения файла:{e}'
+            )
 
     # сравнение потока с исходной трассой
     def compare_with_origin(self):
@@ -119,10 +124,10 @@ class window(QMainWindow, Ui_MainWindow):
         tmp_map = MAP(self.tmp_Q, self.tmp_L, self.tmp_D, self.spinSize.value())
         n_max = max(self.counts) + 5
         probs = tmp_map.event_count_distribution(n_max, t=5)
-        cdf_theory = am.np.cumsum(probs)
-        values_theory = am.np.arange(len(cdf_theory))
-        values_emp, cdf_emp = am.empirical_cdf(self.counts)
-        ks, ksx = am.empirical_kolmogorov_distance(values_emp, cdf_emp, values_theory, cdf_theory)
+        cdf_theory = analysis.np.cumsum(probs)
+        values_theory = analysis.np.arange(len(cdf_theory))
+        values_emp, cdf_emp = analysis.empirical_cdf(self.counts)
+        ks, ksx = analysis.empirical_kolmogorov_distance(values_emp, cdf_emp, values_theory, cdf_theory)
         self._dialogView = dialogCompareTrace(values_emp, cdf_emp, values_theory, cdf_theory, ks, ksx, label1='Трасса', label2='MAP-поток')
         self._dialogView.exec()
         self._dialogView = None
@@ -166,24 +171,18 @@ class window(QMainWindow, Ui_MainWindow):
             self, "Выбор файла", "", "Текстовые файлы (*.txt)"
         )
         if file_path:
-            data = read_trace(file_path)
-            if not data:
-                QMessageBox.critical(self, "Критическая ошибка", "Ошибка чтения файла: файл пустой")
-                return
-            self.characteristics, error = am.analysis(data)
-            if error:
-                QMessageBox.critical(self, "Критическая ошибка", "Ошибка чтения файла:\n" + error)
+            try:
+                data = read_trace(file_path)
+            except Exception as e:
+                QMessageBox.critical(self, "Критическая ошибка", f"Ошибка чтения файла: {e}")
+            try:
+                self.characteristics = analysis.analysis(data)
+            except Exception as e:
+                QMessageBox.critical(self, "Критическая ошибка", "Ошибка чтения файла:\n" + e)
             else:
-                self.textEdit.setText(f"""Всего событий: {len(data)}
-Среднее: {self.characteristics[0]:.6f}
-Дисперсия:  {self.characteristics[1]:.6f}
-Коэффициент вариации: {self.characteristics[2]:.6f}
-Коэффициент корреляции: {self.characteristics[3]:.6f}
-Коэффициент асимметрии: {self.characteristics[4]:.6f}
-Коэффициент эксцесса: {self.characteristics[5]:.6f}
-""")
-                self.counts = am.event_count_distribution(data, 5)
-                v, cdf = am.empirical_cdf(self.counts)
+                self.textEdit.setText(info_text(len(data), self.characteristics))
+                self.counts = analysis.event_count_distribution(data, 5)
+                v, cdf = analysis.empirical_cdf(self.counts)
                 self.cdf_plot_read_trace.plot(v, cdf, label1=None)
                 self.originTraceIsLoaded = True
                 del data
@@ -235,9 +234,9 @@ class window(QMainWindow, Ui_MainWindow):
             self.textHistory.clear()
             size = self.spinSizeMap.value()
             try:
-                q = am.np.array(parse_matrix(self.matrixQ.toPlainText(), "Q"))
-                l = am.np.array(parse_matrix(self.matrixL.toPlainText(), "Λ"))
-                d = am.np.array(parse_matrix(self.matrixD.toPlainText(), "D"))
+                q = analysis.np.array(parse_matrix(self.matrixQ.toPlainText(), "Q"))
+                l = analysis.np.array(parse_matrix(self.matrixL.toPlainText(), "Λ"))
+                d = analysis.np.array(parse_matrix(self.matrixD.toPlainText(), "D"))
                 if size != len(q) or size != len(l) or size != len(d):
                     QMessageBox.warning(self, "Ошибка", "Размеры матриц не совпадают. Проверьте входные данные")
                     return
@@ -247,29 +246,16 @@ class window(QMainWindow, Ui_MainWindow):
             self.progressGenerate.setMaximum(total_events)
             self.btnGenerate.setText("Отмена")
             self.processStarted = True
-            self.start_generation(q, l, d, size, total_events)
+
+            self.stop_event.clear()
+            self.process, self.queue = start_generation_service(q, l, d, size, total_events, self.stop_event)
+            self.timer = QTimer()
+            self.timer.timeout.connect(self.updateBar)
+            self.timer.start(100)
         else:
             self.processStarted = False
             self.cancel_generation()
             self.btnGenerate.setText("Сгенерировать")
-
-        
-
-
-    # старт процесса с имитационной моделью
-    def start_generation(self, q, l, d, size, total_events):
-        self.stop_event.clear()
-        self.queue = Queue()
-
-        self.process = Process(
-            target=generate_worker,
-            args=(q, l, d, size, total_events, self.stop_event, self.queue)
-        )
-        self.process.start()
-
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.updateBar)
-        self.timer.start(100)
 
     # функция остановки генерации
     def cancel_generation(self):
@@ -324,7 +310,7 @@ class window(QMainWindow, Ui_MainWindow):
                 self.spinCorr.value(),
                 self.spinSkew.value() if self.checkSkew.isChecked() else None,
                 self.spinKurt.value() if self.checkKurt.isChecked() else None,
-                METHODS[self.selected_method],
+                self.selected_method,
                 self.extra_params,
                 self.gradParams
             )
@@ -346,6 +332,7 @@ class window(QMainWindow, Ui_MainWindow):
             self.processTimer.stop()
             self.processStarted = False
             self.btnStartSearch.setText("Подобрать MAP-поток")
+            self.textInfoSearch.setText("Поиск отменен.")
 
 
     # открывает диалоговое окно с доп.параметрами
@@ -379,10 +366,10 @@ class window(QMainWindow, Ui_MainWindow):
                     corr=characteristics[3],
                     skew=characteristics[4],
                     kurt=characteristics[5],
-                    cvPer=sm.relativeErr(self.spinCV.value(), characteristics[2]),
-                    corrPer=sm.relativeErr(self.spinCorr.value(), characteristics[3]),
-                    skewPer=sm.relativeErr(self.spinSkew.value(), characteristics[4]),
-                    kurtPer=sm.relativeErr(self.spinKurt.value(), characteristics[5]),
+                    cvPer=analysis.relativeErr(self.spinCV.value(), characteristics[2]),
+                    corrPer=analysis.relativeErr(self.spinCorr.value(), characteristics[3]),
+                    skewPer=analysis.relativeErr(self.spinSkew.value(), characteristics[4]),
+                    kurtPer=analysis.relativeErr(self.spinKurt.value(), characteristics[5]),
                     R=R.round(4),
                     loss=loss
                 )
@@ -403,47 +390,8 @@ class window(QMainWindow, Ui_MainWindow):
         
 
 def _run_search_process(args, queue):
-    result = searchTask(args)
+    result = search_run(args)
     queue.put(result)
-
-# задача для отдельного потока с поиском параметров
-def searchTask(args):
-    size, mean, cv, corr, skew, kurt, method, extra_params, grad_params = args
-
-    (Q, Lambda, D), loss = method(
-        sizeMap=size,
-        cvTarget=cv,
-        corrTarget=corr,
-        skewnessTarget=skew,
-        kurtosisTarget=kurt,
-        **extra_params
-    )
-
-    threshold = grad_params[0]  # порог
-    use = grad_params[1]        # флаг использования
-    # если порог не перепрынут и стоит галочка на использование, то используем градиентный спуск
-    if grad_params[1] is not None and threshold < loss and use:
-        grad = Gradient([Q, Lambda, D], [cv, corr, skew, kurt], **grad_params[2])
-        (Q, Lambda, D), loss = grad.search()
-
-    Q, Lambda, D = sm.meanMap([Q, Lambda, D], mean)
-    R = am.compute_stationary_distribution(Q)
-    characteristics = am.characteristics(Q, Lambda, D)
-    return Q, Lambda, D, R, characteristics, loss
-
-# чтение трассы с файла
-def read_trace(file_path):
-    try:
-        data = []
-        with open(file_path, 'r') as file:
-            for line in file:
-                if not line.strip():
-                    continue
-                data.append(float(line.strip()))
-            return data
-    except Exception as e:
-        QMessageBox.warning(None, "Ошибка", f"Ошибка чтения файла:\n{type(e).__name__} - {e}")
-        return
 
 def matrix_to_text(matrix, name="Q"):
     """Возвращает строку вида 'Q = [ ... ]' с переносами строк для QLabel"""
@@ -451,76 +399,7 @@ def matrix_to_text(matrix, name="Q"):
     body = "\n".join(lines)
     return f"{name} = \n{body}\n"
 
-# парсер матриц из текста
-def parse_matrix(text: str, m) -> list[list[float]]:
-    if m == 'Λ':
-        lines = text.strip().splitlines()
-        matrix = [float(x) for x in lines]
-        if not matrix: 
-            QMessageBox.warning(None, "Ошибка", f"Матрица {m} пустая") 
-            return
-        return matrix
 
-    lines = [line for line in text.strip().splitlines() if line.strip()]  # убираем пустые строки
-    matrix = []
-
-    for i, line in enumerate(lines, start=1):
-        try:
-            row = [float(x) for x in line.split()]
-        except ValueError:
-            QMessageBox.warning(None, "Ошибка", f"Ошибка в матрице {m} в строке {i}: некорректное число")
-            return []
-
-        matrix.append(row)
-
-    if not matrix:
-        QMessageBox.warning(None, "Ошибка", f"Матрица {m} пустая")
-        return []
-
-    # Проверка: все строки должны иметь одинаковое количество столбцов
-    num_cols = len(matrix[0])
-    for i, row in enumerate(matrix, start=1):
-        if len(row) != num_cols:
-            QMessageBox.warning(None, "Ошибка", f"Ошибка в матрице {m}: разное количество столбцов в строке {i}")
-            return []
-
-    # Проверка квадратной матрицы
-    if len(matrix) != num_cols:
-        QMessageBox.warning(None, "Ошибка", f"Матрица {m} не квадратная")
-        return []
-
-    return matrix
-
-# генератор событий
-def generate_worker(q, l, d, size, total_events, stop_event, queue):
-    threat = MAP(q, l, d, size)
-    count_events = 0
-    batch_size = total_events / 10
-    buffer = []
-    while count_events < total_events:
-        if stop_event.is_set():
-            return
-        
-        events = threat.step()
-        if events[0] == "event":
-            count_events += 1
-            buffer.append(events[1])
-        elif events[0] == "transition" and events[4]:
-            count_events += 1
-            buffer.append(events[3])
-
-        if len(buffer) >= batch_size:
-            queue.put(("batch", buffer.copy(), count_events))
-            buffer.clear()
-
-    if buffer:
-        queue.put(("batch", buffer, count_events))
-
-METHODS = {
-    "Последовательный перебор": sm.brute_force_search,
-    "Перебор в окрестности": sm.local_search,
-    "Градиентный спуск": SGD.sgd_optimization
-}
 
 INFO_TEMPLATE="""Получившиеся числовые характеристики длин интервалов максимально возможно приближены к заданным
 Ошибка (MSE): {loss:.2e}

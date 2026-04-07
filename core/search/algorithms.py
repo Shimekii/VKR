@@ -1,7 +1,7 @@
 import numpy as np
 import copy
 import math
-from core import analysisModule
+from core.analysis import analysis
 
 
 # Генерация матрицы Q
@@ -47,7 +47,7 @@ def fit(individual, cvTarget, corrTarget, skewnessTarget = None, kurtosisTarget 
         weight_corr = weights[1]
         weight_skew = weights[2]
         weight_kurt = weights[3]
-    meanEmp, varEmp, cvEmp, corrEmp, skewnessEmp, kurtosisEmp = analysisModule.characteristics(Q, Lambda, D)
+    meanEmp, varEmp, cvEmp, corrEmp, skewnessEmp, kurtosisEmp = analysis.characteristics(Q, Lambda, D)
 
     if skewnessTarget is None and kurtosisTarget is None:
         error = (
@@ -102,7 +102,7 @@ def initialize_population(pop_size, size, rQ, rLamb):
 """_____________________________________________________________________________________"""
 
 # Алгоритм с последовательным перебором параметров
-def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=10, skewnessTarget = None, kurtosisTarget = None, weights = None):
+def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=1, rLamb=10, skewnessTarget = None, kurtosisTarget = None, weights = None):
     """
         pop_size - кол-во генерируемых МАР-потоков для поиска начального решения\n
         sizeMap - размер MAP-потока\n
@@ -210,7 +210,7 @@ def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=
 # Алгоритм с перебором параметров MAP-потока в заданной окрестности
 
 
-def local_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=10, rLamb=10, percent = 0.02, skewnessTarget = None, kurtosisTarget = None, enhanced = False, weights = None):
+def local_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=1, rLamb=10, percent = 0.02, skewnessTarget = None, kurtosisTarget = None, enhanced = False, weights = None):
     """
     pop_size - кол-во генерируемых МАР-потоков для поиска начального решения\n
     sizeMap - размерность MAP-потока\n
@@ -326,8 +326,8 @@ def initialGuess(pop_size, sizeMap, cvEmp, corrEmp, rQ, rLamb, skewness, kurtosi
 # Корректировка среднего
 def meanMap(map, meanTarget):
     Q, Lambda, D = map
-    D0,D1 = analysisModule.getD0D1(Q, Lambda, D)
-    R = analysisModule.compute_stationary_distribution(Q)
+    D0,D1 = analysis.getD0D1(Q, Lambda, D)
+    R = analysis.compute_stationary_distribution(Q)
     k = np.dot(R, np.dot(D1, np.ones(len(R))))
     mean = k ** -1
     koef = meanTarget / mean
@@ -405,7 +405,3 @@ def recoveryQ(Q):
         Q[i][i] = 0
         Q[i][i] = -np.sum(Q[i])
     return Q
-
-
-def relativeErr(true, pred):
-    return ((true - pred) / pred) * 100

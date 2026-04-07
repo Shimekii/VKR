@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.linalg import expm
-import core.analysisModule as am
+import core.analysis.analysis as am
 from numpy.fft import ifft
 
 class MAP:

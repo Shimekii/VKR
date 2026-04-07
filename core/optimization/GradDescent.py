@@ -1,4 +1,4 @@
-import core.searchModule as sm
+import core.search.algorithms as sm
 import numpy as np
 
 class Gradient:
@@ -118,7 +118,7 @@ class Gradient:
             params_plus = params.copy()
             params_minus = params.copy()
 
-            # params_plus[i] += eps
+            params_plus[i] += eps
             params_minus[i] -= eps
 
             grad[i] = (self.loss_fn(params_plus) - self.loss_fn(params_minus)) / (2 * eps)

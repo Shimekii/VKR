@@ -1,5 +1,5 @@
 import torch
-from core import analysisModule as am
+from core.analysis import analysis as am
 import numpy as np
 
 #device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

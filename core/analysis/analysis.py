@@ -20,9 +20,9 @@ def analysis(data):
         skew_val = skew(intervals, bias=False)
         kurt_val = kurtosis(intervals, bias=False)
         characteristics = (average_interval, variance, variation, corr, skew_val, kurt_val)
-        return characteristics, None
+        return characteristics
     except Exception as e:
-        return None, f'{type(e).__name__} - {e}'
+        raise ValueError(e)
 
 def generateRandomParameters(size, type: str, rQ = 10, rLamb = 10):
     Q = np.zeros((size, size))
@@ -142,93 +142,81 @@ def compute_stationary_distribution(Q):
     return R
     #print(self.R.sum())
 
-
-def fit(individual, cvEmp, corrEmp):
-    Q, Lambda, D = individual
-    meanMAP, varMAP, cvMAP, corrMAP = characteristics(Q, Lambda, D)
-
-    error = (
-            2 * ((cvMAP - cvEmp) / cvEmp) ** 2 +
-            ((corrMAP - corrEmp) / (1 + abs(corrEmp))) ** 2
-    )
-
-    return error / 2
-
-def drawDensity(events, step=0.01):
-    intervals = [np.diff(event) for event in events]
+# def drawDensity(events, step=0.01):
+#     intervals = [np.diff(event) for event in events]
     
-    maxNum = [max(x) for x in intervals]
-    bin_list = [np.arange(0, Max + step, step) for Max in maxNum]
+#     maxNum = [max(x) for x in intervals]
+#     bin_list = [np.arange(0, Max + step, step) for Max in maxNum]
     
-    colorsLine = ['lightcoral', 'olivedrab', 'teal', 'fuchsia']
-    labels = ['Основной поток', 'Поток 1 0.0098', 'Поток 2 0.0258', 'Поток 4 0.0255']
+#     colorsLine = ['lightcoral', 'olivedrab', 'teal', 'fuchsia']
+#     labels = ['Основной поток', 'Поток 1 0.0098', 'Поток 2 0.0258', 'Поток 4 0.0255']
     
-    plt.figure(figsize=(12, 6))
+#     plt.figure(figsize=(12, 6))
 
-    for idx, (interval, bins) in enumerate(zip(intervals, bin_list)):
-        N = len(interval)  # общее число интервалов
+#     for idx, (interval, bins) in enumerate(zip(intervals, bin_list)):
+#         N = len(interval)  # общее число интервалов
         
-        # Считаем частоты в бинах
-        counts, bin_edges = np.histogram(interval, bins=bins)
+#         # Считаем частоты в бинах
+#         counts, bin_edges = np.histogram(interval, bins=bins)
         
-        # Нормируем до плотности: (i / N) / delta
-        density = counts / (N * step)
+#         # Нормируем до плотности: (i / N) / delta
+#         density = counts / (N * step)
         
-        # Середины бинов
-        bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+#         # Середины бинов
+#         bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
         
-        # Рисуем полигон плотности
-        plt.plot(
-            bin_centers,
-            density,
-            marker='o',
-            linestyle='-',
-            label=labels[idx],
-            color=colorsLine[idx],
-            markersize=3
-        )
+#         # Рисуем полигон плотности
+#         plt.plot(
+#             bin_centers,
+#             density,
+#             marker='o',
+#             linestyle='-',
+#             label=labels[idx],
+#             color=colorsLine[idx],
+#             markersize=3
+#         )
 
-    plt.legend()
-    plt.grid(alpha=0.6, linestyle='--')
-    plt.tight_layout()
-    plt.show()
+#     plt.legend()
+#     plt.grid(alpha=0.6, linestyle='--')
+#     plt.tight_layout()
+#     plt.show()
 
 
-def drawCountEvents(events, labels, colors=['lightcoral', 'olivedrab', 'teal', 'fuchsia', 'red', 'green', 'blue'],t=1):
-    """
-    Строит полигон частот для дискретной случайной величины:
-    K = число событий в случайно выбранном единичном интервале времени.
-    """
-    plt.figure(figsize=(12, 6))
+# def drawCountEvents(events, labels, colors=['lightcoral', 'olivedrab', 'teal', 'fuchsia', 'red', 'green', 'blue'],t=1):
+#     """
+#     Строит полигон частот для дискретной случайной величины:
+#     K = число событий в случайно выбранном единичном интервале времени.
+#     """
+#     plt.figure(figsize=(12, 6))
 
-    for idx, event_series in enumerate(events):
-        if len(event_series) == 0:
-            continue
+#     for idx, event_series in enumerate(events):
+#         if len(event_series) == 0:
+#             continue
 
-        # Шаг 1: Считаем число событий в каждом единичном интервале
-        t_max = int(np.ceil(np.max(event_series)))
-        bins = np.arange(0, t_max + t, t)
-        counts_per_interval, _ = np.histogram(event_series, bins=bins)  # это k₁, k₂, ..., kₙ
+#         # Шаг 1: Считаем число событий в каждом единичном интервале
+#         t_max = int(np.ceil(np.max(event_series)))
+#         bins = np.arange(0, t_max + t, t)
+#         counts_per_interval, _ = np.histogram(event_series, bins=bins)  # это k₁, k₂, ..., kₙ
 
-        # Шаг 2: Считаем частоты значений k (0,1,2,...)
-        k_values, frequencies = np.unique(counts_per_interval, return_counts=True)
+#         # Шаг 2: Считаем частоты значений k (0,1,2,...)
+#         k_values, frequencies = np.unique(counts_per_interval, return_counts=True)
 
-        # Шаг 3: Строим полигон частот
-        plt.plot(
-            k_values,
-            frequencies,
-            marker='o',
-            linestyle='-',
-            color=colors[idx % len(colors)],
-            label=labels[idx],
-            markersize=4
-        )
+#         # Шаг 3: Строим полигон частот
+#         plt.plot(
+#             k_values,
+#             frequencies,
+#             marker='o',
+#             linestyle='-',
+#             color=colors[idx % len(colors)],
+#             label=labels[idx],
+#             markersize=4
+#         )
 
-    plt.legend()
-    plt.grid(True, linestyle='--', alpha=0.6)
-    # plt.xticks(k_values)  # чтобы все целые k были подписаны (можно убрать при большом разбросе)
-    plt.tight_layout()
-    plt.show()
+#     plt.legend()
+#     plt.grid(True, linestyle='--', alpha=0.6)
+#     # plt.xticks(k_values)  # чтобы все целые k были подписаны (можно убрать при большом разбросе)
+#     plt.tight_layout()
+#     plt.show()
 
 # находит распределение числа событий в выборке за время t
 def event_count_distribution(trace, t):
@@ -277,6 +265,10 @@ def empirical_kolmogorov_distance(v1, f1, v2, f2):
     idx_max = np.argmax(abs_diff)
     x_max = grid[idx_max]
     return D, x_max
+
+# Относительная ошибка
+def relativeErr(true, pred):
+    return ((true - pred) / pred) * 100
     
 
     

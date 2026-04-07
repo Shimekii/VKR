@@ -75,7 +75,7 @@ class Ui_Dialog(object):
         self.spinBruteQ = QSpinBox(self.pageBruteForce)
         self.spinBruteQ.setObjectName(u"spinBruteQ")
         self.spinBruteQ.setMaximum(99999)
-        self.spinBruteQ.setValue(10)
+        self.spinBruteQ.setValue(1)
 
         self.verticalLayout.addWidget(self.spinBruteQ)
 
@@ -126,7 +126,7 @@ class Ui_Dialog(object):
         self.spinLocalQ = QSpinBox(self.pageLocalSearch)
         self.spinLocalQ.setObjectName(u"spinLocalQ")
         self.spinLocalQ.setMaximum(99999)
-        self.spinLocalQ.setValue(10)
+        self.spinLocalQ.setValue(1)
 
         self.verticalLayout_3.addWidget(self.spinLocalQ)
 
