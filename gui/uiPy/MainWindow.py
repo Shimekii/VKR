@@ -72,6 +72,22 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
         self.buttons = QWidget(self.centralwidget)
         self.buttons.setObjectName(u"buttons")
+        self.buttons.setStyleSheet(u"QPushButton {\n"
+"    text-align: left;\n"
+"    border-radius: 6px;\n"
+"    padding: 4px;\n"
+"    padding-right: 15px;\n"
+"	color: palette(ButtonText);\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: palette(mid);\n"
+"}\n"
+"\n"
+"QPushButton:checked {\n"
+"    background-color: palette(highlight);\n"
+"    color: palette(highlighted-text);\n"
+"}")
         self.verticalLayout_4 = QVBoxLayout(self.buttons)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.btnPageTrace = QPushButton(self.buttons)
@@ -118,6 +134,7 @@ class Ui_MainWindow(object):
 "    border-radius: 6px;\n"
 "    padding: 4px;\n"
 "    padding-right: 15px;\n"
+"	color: palette(ButtonText);\n"
 "}\n"
 "\n"
 "QPushButton:hover {\n"

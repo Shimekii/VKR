@@ -2,7 +2,7 @@
 from multiprocessing import Process, Queue
 from core.map.MAP import MAP
 
-
+# генератор событий
 def generate_worker(q, l, d, size, total_events, stop_event, queue):
     threat = MAP(q, l, d, size)
     count_events = 0
@@ -27,6 +27,7 @@ def generate_worker(q, l, d, size, total_events, stop_event, queue):
     if buffer:
         queue.put(("batch", buffer, count_events))
 
+# создает процесс для генерации событий
 def start_generation_service(q_matrix, l_matrix, d_matrix, size, total_events, stop_event):
     queue = Queue()
     process = Process(

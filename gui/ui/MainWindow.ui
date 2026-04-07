@@ -73,6 +73,24 @@
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item alignment="Qt::AlignmentFlag::AlignTop">
        <widget class="QWidget" name="buttons" native="true">
+        <property name="styleSheet">
+         <string notr="true">QPushButton {
+    text-align: left;
+    border-radius: 6px;
+    padding: 4px;
+    padding-right: 15px;
+	color: palette(ButtonText);
+}
+
+QPushButton:hover {
+    background-color: palette(mid);
+}
+
+QPushButton:checked {
+    background-color: palette(highlight);
+    color: palette(highlighted-text);
+}</string>
+        </property>
         <layout class="QVBoxLayout" name="verticalLayout_4">
          <item>
           <widget class="QPushButton" name="btnPageTrace">
@@ -139,6 +157,7 @@ QPushButton:checked {
     border-radius: 6px;
     padding: 4px;
     padding-right: 15px;
+	color: palette(ButtonText);
 }
 
 QPushButton:hover {

@@ -12,6 +12,7 @@ from services.search_service import search_run
 from services.io_service import info_text, read_trace
 from services.io_service import parse_matrix
 from services.simulation_service import start_generation_service
+from services.theme_service import ThemeService
 
 class window(QMainWindow, Ui_MainWindow):
     def __init__(self):
@@ -72,6 +73,8 @@ class window(QMainWindow, Ui_MainWindow):
         self.btnTranferCharacteristics.clicked.connect(self.transfer) # сигнал на кнопку для переноса характеристик над подбор
         self.processTimer.timeout.connect(self.checkProcess)        # сигнал на таймер для проверки завершения поиска
         self.btnGradientParams.clicked.connect(self._dialogGradParams) # сигнал на кнопку открытия параетров градиентного спуска для подгонки
+        self.lightTheme.triggered.connect(lambda: ThemeService.set_theme('light'))
+        self.darkTheme.triggered.connect(lambda: ThemeService.set_theme('dark'))
 
     # Переключение страниц
     def switch_page(self, button, page):
