@@ -44,47 +44,6 @@ class MplCanvas(FigureCanvas):
         self.draw()
 
 class CDFPlot(MplCanvas):
-    def plot(self, values1, cdf1, ks=None, ksx=None,
-             values2=None, cdf2=None,
-             label1='Трасса 1', label2='Трасса 2'):
-
-        self.ax.clear()
-
-        self.apply_theme()
-
-        # графики
-        self.ax.step(values1, cdf1, where='post', label=label1)
-
-        if values2 is not None and cdf2 is not None:
-            self.ax.step(values2, cdf2, where='post', label=label2)
-
-        # подписи
-        self.ax.set_xlabel("k", color=self.text)
-        self.ax.set_ylabel("F(k)", color=self.text)
-
-        # сетка
-        self.ax.grid()
-
-        # KS линия
-        if ks is not None and ksx is not None:
-            self.ax.axvline(
-                ksx,
-                color='white' if self.dark else 'black',
-                linestyle="--",
-                label=f"KS-distance = {ks:4f}"
-            )
-
-        # легенда
-        legend = self.ax.legend()
-        if legend:
-            legend.get_frame().set_facecolor(self.bg)
-            legend.get_frame().set_edgecolor(self.text)
-            for t in legend.get_texts():
-                t.set_color(self.text)
-
-        self.draw()
-
-class CDFPlot(MplCanvas):
     def plot(self, values1, cdf1, ks=None, ksx=None, values2=None, cdf2=None,
              label1='Трасса 1', label2='Трасса 2'):
 
