@@ -12,7 +12,7 @@ class ThemeService:
             # темная тема
             palette = QPalette()
             palette.setColor(QPalette.WindowText, QColor(255, 255, 255))
-            palette.setColor(QPalette.Button, QColor(60, 60, 60))
+            palette.setColor(QPalette.Button, QColor(43, 43, 43))
             palette.setColor(QPalette.Light, QColor(120, 120, 120))
             palette.setColor(QPalette.Midlight, QColor(90, 90, 90))
             palette.setColor(QPalette.Dark, QColor(30, 30, 30))
@@ -62,16 +62,10 @@ class ThemeService:
         # Обновляем все виджеты
         for widget in app.allWidgets():
             widget.update()
+            # сохраняем виджет с кнопками слева
             if widget.objectName() == "buttons":
                 buttons = widget
-                widget.setStyleSheet(
-                    BUTTON_STYLE_LEFTMENU.format(
-                        btn_color = palette.color(QPalette.ButtonText).name(),
-                        bg_hover = palette.color(QPalette.Mid).name(),
-                        bg_checked = palette.color(QPalette.Highlight).name(),
-                        txt_checked = palette.color(QPalette.HighlightedText).name()
-                    )
-                )
+            # отдельно применяем стиль к меню-бару
             if isinstance(widget, QMenu):
                 widget.setStyleSheet(
                     MENUBAR_STYLE.format(
@@ -80,6 +74,7 @@ class ThemeService:
                         bg_hover = palette.color(QPalette.Mid).name()
                     )
                 )
+            # перерисовываем кнопки, чтобы синхронизировался цвет
             if isinstance(widget, QPushButton):
                 if buttons and buttons.isAncestorOf(widget):
                     widget.setStyleSheet("")
