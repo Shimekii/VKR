@@ -513,7 +513,11 @@ li.checked::marker { content: &quot;\2612&quot;; }
               </widget>
              </item>
              <item>
-              <widget class="QDoubleSpinBox" name="spinMean"/>
+              <widget class="QDoubleSpinBox" name="spinMean">
+               <property name="maximum">
+                <double>999.990000000000009</double>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QLabel" name="label_4">
@@ -532,6 +536,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
               <widget class="QDoubleSpinBox" name="spinCV">
                <property name="minimum">
                 <double>1.000000000000000</double>
+               </property>
+               <property name="maximum">
+                <double>999.990000000000009</double>
                </property>
               </widget>
              </item>
@@ -572,6 +579,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
               <widget class="QDoubleSpinBox" name="spinSkew">
                <property name="enabled">
                 <bool>false</bool>
+               </property>
+               <property name="maximum">
+                <double>999.990000000000009</double>
                </property>
               </widget>
              </item>

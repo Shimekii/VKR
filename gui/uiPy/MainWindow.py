@@ -328,6 +328,7 @@ class Ui_MainWindow(object):
 
         self.spinMean = QDoubleSpinBox(self.groupBox)
         self.spinMean.setObjectName(u"spinMean")
+        self.spinMean.setMaximum(999.990000000000009)
 
         self.verticalLayout_3.addWidget(self.spinMean)
 
@@ -340,6 +341,7 @@ class Ui_MainWindow(object):
         self.spinCV = QDoubleSpinBox(self.groupBox)
         self.spinCV.setObjectName(u"spinCV")
         self.spinCV.setMinimum(1.000000000000000)
+        self.spinCV.setMaximum(999.990000000000009)
 
         self.verticalLayout_3.addWidget(self.spinCV)
 
@@ -365,6 +367,7 @@ class Ui_MainWindow(object):
         self.spinSkew = QDoubleSpinBox(self.groupBox)
         self.spinSkew.setObjectName(u"spinSkew")
         self.spinSkew.setEnabled(False)
+        self.spinSkew.setMaximum(999.990000000000009)
 
         self.verticalLayout_3.addWidget(self.spinSkew)
 
