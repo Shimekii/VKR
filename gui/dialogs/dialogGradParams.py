@@ -44,7 +44,7 @@ class gradParameters(QDialog, Ui_gradParams):
 
         return threshold, self.checkUseGrad.isChecked(), {
             "eps": eps,
-            "steps": steps,
+            "max_iter": steps,
             "patience": patience,
             "lr": lr
         }

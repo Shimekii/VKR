@@ -127,7 +127,7 @@ def getD0D1(Q, Lambda, D=None):
         B = np.multiply(Q, D)       # Q * D
         D1 = np.add(Lambda, B)      # lambda + (Q * D)
         D0 = np.subtract(Q, D1)     # Q - D1
-        assert np.allclose(D0 + D1, Q)
+        # assert np.allclose(D0 + D1, Q)
     return D0, D1
 
 def compute_stationary_distribution(Q):

@@ -3,12 +3,12 @@ import numpy as np
 
 class Gradient:
 
-    def __init__(self, init_matricies, targets, lr=0.05, steps=1e4, eps=1e-7, patience=250):
+    def __init__(self, init_matricies, targets, lr=0.05, max_iter=1e4, eps=1e-7, patience=250):
         self.init_matricies = init_matricies
         self.targets = targets
         self.size = len(init_matricies[0])
         self.lr = lr
-        self.steps = steps
+        self.max_iter = max_iter
         self.eps = eps
         self.patience = patience
 
@@ -148,7 +148,7 @@ class Gradient:
         loss = self.loss_fn(best_params)
         best_loss = np.inf
         prevLoss = 0
-        while loss > self.eps and i < self.steps:
+        while loss > self.eps and i < self.max_iter:
             # считаем градиент
             grad = self.gradientSPSA(params)
             
