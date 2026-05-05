@@ -67,7 +67,7 @@ def characteristics(Q, Lambda, D=None, write=False, name='stat'):
     temp2 = np.dot(temp1, BQ)  # temp1 * (B-Q)^-1
     temp3 = np.dot(temp2, E) - 1  # temp2 * E - 1
     var = temp3 / (k ** 2)
-    if var <= -1e12:
+    if var <= 1e-10:
         raise ValueError("Var <0")
 
     # Корреляция
