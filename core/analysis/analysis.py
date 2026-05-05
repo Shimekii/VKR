@@ -67,6 +67,8 @@ def characteristics(Q, Lambda, D=None, write=False, name='stat'):
     temp2 = np.dot(temp1, BQ)  # temp1 * (B-Q)^-1
     temp3 = np.dot(temp2, E) - 1  # temp2 * E - 1
     var = temp3 / (k ** 2)
+    if var <= -1e12:
+        raise ValueError("Var <0")
 
     # Корреляция
     cTemp1 = np.dot((k ** -1), R)  # k^-1 * R
@@ -127,7 +129,8 @@ def getD0D1(Q, Lambda, D=None):
         B = np.multiply(Q, D)       # Q * D
         D1 = np.add(Lambda, B)      # lambda + (Q * D)
         D0 = np.subtract(Q, D1)     # Q - D1
-        # assert np.allclose(D0 + D1, Q)
+        if not np.allclose(D0 + D1, Q):
+            raise ValueError("D0 + D1 not eq Q")
     return D0, D1
 
 def compute_stationary_distribution(Q):
