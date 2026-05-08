@@ -1,9 +1,7 @@
-
 from core.optimization import SGD
 from core.optimization.GradDescent import Gradient
 from core.analysis import analysis
 from core.search import algorithms
-
 
 # задача для отдельного потока с поиском параметров
 def search_run(args):
@@ -33,5 +31,4 @@ def search_run(args):
 METHODS = {
     "Последовательный перебор": algorithms.brute_force_search,
     "Перебор в окрестности": algorithms.local_search,
-    "Градиентный спуск": SGD.sgd_optimization
 }

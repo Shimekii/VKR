@@ -11,8 +11,6 @@ class gradParameters(QDialog, Ui_gradParams):
         self.accept()
 
     def useGrad(self, check):
-        # self.checkUseGrad.setEnabled()
-        # check = self.checkUseGrad.isEnabled()
         self.lineThreshold.setEnabled(check)
         self.lineEps.setEnabled(check)
         self.spinMaxIters.setEnabled(check)

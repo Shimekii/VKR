@@ -2,6 +2,6 @@
 build/
 cli/
 *__pycache__*
-app.spec
+*.spec
 logSearch.txt
 dist/

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>331</width>
-    <height>350</height>
+    <height>379</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -25,14 +25,14 @@
   <property name="maximumSize">
    <size>
     <width>331</width>
-    <height>350</height>
+    <height>400</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>Настройки</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
-   <item>
+   <item alignment="Qt::AlignmentFlag::AlignTop">
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="minimumSize">
       <size>
@@ -47,7 +47,7 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="pageBruteForce">
       <layout class="QVBoxLayout" name="verticalLayout">

@@ -4,56 +4,71 @@ import core.analysis.analysis as am
 from numpy.fft import ifft
 
 class MAP:
-    def __init__(self, q=None, lamb=None, d=None, size=None, name=None):
-        self.current_time = 0
-        self.time_next_event = None
-        self.time_next_transition = None
+    def __init__(self, q=None, lamb=None, d=None, name=None):
         self.isCreated = False
         if name:
             self.__load_from_file(name)
             self.R = am.compute_stationary_distribution(self.Q)
             self.isCreated = True
         else:
-            if len(lamb) and len(d) == len(q):
-                self.size = size
+            self.size = len(q)
+            if len(lamb) == self.size and len(d) == self.size:
                 self.Q = q
+                lamb = np.array(lamb)
                 if lamb.ndim == 1:
-                    self.lambda_ = np.zeros((size, size))
-                    for i in range(size):
+                    self.lambda_ = np.zeros((self.size, self.size))
+                    for i in range(self.size):
                         self.lambda_[i][i] = lamb[i]
                 else:
                     self.lambda_ = lamb
                 self.D = d
                 self.R = am.compute_stationary_distribution(self.Q)
                 self.isCreated = True
+                self.current_time = 0
+            else:
+                raise ValueError("Размеры матриц не совпадают")
         self.current_state = self.__InitialState()
-        self._schedule_next()
+        self.current_time = 0
+        self.time_next_event = self.current_time + self.__ExpDist(self.lambda_[self.current_state][self.current_state])
+        self.time_next_transition = self.current_time + self.__ExpDist(-self.Q[self.current_state][self.current_state])
 
     def __load_from_file(self, filename):
         with open(filename, 'r') as file:
-            # Считываем размер матрицы
-            self.size = int(file.readline().strip())
+            try:
+                # Считываем размер матрицы
+                self.size = int(file.readline().strip())
+            except Exception:
+                raise ValueError("Ошибка чтения размерности.")
 
-            # Считываем матрицу Q
-            self.Q = np.zeros((self.size, self.size))
-            for i in range(self.size):
-                line = file.readline().strip()
-                if line:  # Проверяем, что строка не пустая
-                    self.Q[i] = [float(x) for x in line.split()]
-
-            # Считываем диагональные элементы для матрицы Lambda
-            self.lambda_ = np.zeros((self.size, self.size))
-            for i in range(self.size):
-                line = file.readline().strip()
-                if line:  # Проверяем, что строка не пустая
-                    self.lambda_[i][i] = float(line)
-
-            # Считываем матрицу D
-            self.D = np.zeros((self.size, self.size))
-            for i in range(self.size):
-                line = file.readline().strip()
-                if line:  # Проверяем, что строка не пустая
-                    self.D[i] = [float(x) for x in line.split()]
+            try:
+                # Считываем матрицу Q
+                self.Q = np.zeros((self.size, self.size))
+                for i in range(self.size):
+                    line = file.readline().strip()
+                    if line:  # Проверяем, что строка не пустая
+                        self.Q[i] = [float(x) for x in line.split()]
+            except Exception:
+                raise ValueError("Ошибка чтения матрицы Q.")
+            
+            try:
+                # Считываем диагональные элементы для матрицы Lambda
+                self.lambda_ = np.zeros((self.size, self.size))
+                for i in range(self.size):
+                    line = file.readline().strip()
+                    if line:  # Проверяем, что строка не пустая
+                        self.lambda_[i][i] = float(line)
+            except Exception:
+                raise ValueError("Ошибка чтения интенсивностей.")
+            
+            try:
+                # Считываем матрицу D
+                self.D = np.zeros((self.size, self.size))
+                for i in range(self.size):
+                    line = file.readline().strip()
+                    if line:  # Проверяем, что строка не пустая
+                        self.D[i] = [float(x) for x in line.split()]
+            except Exception:
+                raise ValueError("Ошибка чтения матрицы D.")
 
             self.R = np.zeros(self.size)
 
@@ -95,110 +110,21 @@ class MAP:
                 return i
         return 0
 
-    # Фукнция генерации выборки событий
-    def simutale(self, total_time=None, total_events=None, events=None):
-        with open("log.txt", "w") as file_log, open("events.txt", "w") as file_events:
-            current_state = self.__InitialState()
-            #file_log.write(f"First state: {current_state}\n")
-            #file_log.write(f"{'Time':>15}{'State':>15}\n")
-            current_time = 0.0
-            count_events = 0
-            if total_time is not None:
-                # Симуляция по времени
-                while current_time < total_time:
-                    per = (current_time / total_time) * 100
-                    print(f"\rProgress: {per:.2f}%", end="")
-
-                    time_to_next_event = self.__ExpDist(self.lambda_[current_state][current_state]) # время следующего события
-                    time_to_next_transition = self.__ExpDist(-self.Q[current_state][current_state]) # время следующего перехода
-
-                    next_event_time = current_time + time_to_next_event
-                    next_transition_time = current_time + time_to_next_transition
-
-                    next_time = min(next_event_time, next_transition_time)
-                    current_time = next_time
-
-                    while current_time < total_time and current_time < next_transition_time:
-                        file_log.write(f"{current_time:>15.6f}{current_state:>15} Event\n")
-                        file_events.write(f"{current_time:.6f}\n")
-                        if events is not None: events.append(current_time)
-                        time_to_next_event = self.__ExpDist(self.lambda_[current_state][current_state])
-                        current_time += time_to_next_event
-
-                    if current_time >= next_transition_time:
-                        current_time = next_transition_time
-
-                    if current_time < total_time:
-                        new_state = self.__Transition(current_state)
-                        if self.__DidEventOccur(current_state, new_state):
-                            file_log.write(f"{current_time:>15.6f}{current_state:>15} Event\n")
-                            file_events.write(f"{current_time:.6f}\n")
-                            if events is not None:
-                                events.append(current_time)
-                        file_log.write(f"{current_time:>15.6f}{new_state:>15} Transition\n")
-                        current_state = new_state
-            elif total_events is not None:
-                # Симуляция по количеству событий
-                while count_events < total_events:
-                    per = (count_events / total_events) * 100
-                    print(f"\rProgress: {per:.2f}%", end="")
-
-                    time_to_next_event = self.__ExpDist(self.lambda_[current_state][current_state])
-                    time_to_next_transition = self.__ExpDist(-self.Q[current_state][current_state])
-
-                    next_event_time = current_time + time_to_next_event
-                    next_transition_time = current_time + time_to_next_transition
-
-                    next_time = min(next_event_time, next_transition_time)
-                    current_time = next_time
-
-                    while count_events < total_events and current_time < next_transition_time:
-                        #file_log.write(f"{current_time:>15.6f}{current_state:>15} Event\n")
-                        #file_events.write(f"{current_time:.6f}\n")
-                        if events is not None: events.append(current_time)
-                        count_events += 1
-                        time_to_next_event = self.__ExpDist(self.lambda_[current_state][current_state])
-                        current_time += time_to_next_event
-
-                    if current_time >= next_transition_time:
-                        current_time = next_transition_time
-
-                    if count_events < total_events:
-                        new_state = self.__Transition(current_state)
-                        if self.__DidEventOccur(current_state, new_state):
-                            count_events += 1
-                            #file_log.write(f"{current_time:>15.6f}{current_state:>15} Event\n")
-                            #file_events.write(f"{current_time:.6f}\n")
-                            if events is not None:
-                                events.append(current_time)
-                        current_state = new_state
-                        #file_log.write(f"{current_time:>15.6f}{current_state:>15} Transition\n")
-
     # Генерация одного события
     def step(self):
         if self.time_next_event <= self.time_next_transition:
             self.current_time = self.time_next_event
-            self._schedule_next()
-            return ('event', self.current_time)
+            self.time_next_event = self.current_time + self.__ExpDist(self.lambda_[self.current_state][self.current_state])
+            return ('event', self.current_time, None)
         else:
             self.current_time = self.time_next_transition
             old_state = self.current_state
             new_state = self.__Transition(old_state)
             self.current_state = new_state
             event_transition = self.__DidEventOccur(old_state, new_state)
-            self._schedule_next()
-            return ('transition', old_state, new_state, self.current_time, event_transition)
-        
-    # Обновляем время события и перехода
-    def _schedule_next(self):
-        self.time_next_event = (
-            self.current_time +
-            self.__ExpDist(self.lambda_[self.current_state][self.current_state])
-        )
-        self.time_next_transition = (
-            self.current_time +
-            self.__ExpDist(-self.Q[self.current_state][self.current_state])
-        )
+            self.time_next_event = self.current_time + self.__ExpDist(self.lambda_[self.current_state][self.current_state])
+            self.time_next_transition = self.current_time + self.__ExpDist(-self.Q[self.current_state][self.current_state])
+            return ('transition', self.current_time, event_transition)
 
     # Проверяет, произошло ли событие при переходе из from_state в to_state.
     def __DidEventOccur(self, from_state, to_state):

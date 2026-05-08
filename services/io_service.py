@@ -1,4 +1,7 @@
 # чтение трассы с файла
+from core.map.MAP import MAP
+import numpy as np
+
 def read_trace(file_path) -> list[float]:
     data = []
     with open(file_path, 'r') as file:
@@ -42,7 +45,10 @@ def parse_matrix(text: str, m) -> list[list[float]]:
     if len(matrix) != num_cols:
         raise ValueError(f"Матрица {m} не квадратная")
 
-    return matrix
+    return np.array(matrix)
+
+def loadMap(path):
+    return MAP(name=path)
 
 def info_text(len, characteristics):
     return f"""Всего событий: {len}

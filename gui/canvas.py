@@ -9,36 +9,36 @@ class MplCanvas(FigureCanvas):
         self.fig = Figure()
         self.ax = self.fig.add_subplot(111)
         super().__init__(self.fig)
-        self.apply_theme()  # при создании можно применить текущую тему
+        self.apply_theme()
 
     def apply_theme(self):
         # берём цвета из текущей палитры приложения
         palette = QApplication.instance().palette()
-        bg = palette.color(QPalette.Window).name()
-        text = palette.color(QPalette.WindowText).name()
-        grid = palette.color(QPalette.Mid).name()
+        self.bg = palette.color(QPalette.Window).name()
+        self.text = palette.color(QPalette.WindowText).name()
+        self.grid = palette.color(QPalette.Mid).name()
 
         # фон фигуры и осей
-        self.fig.patch.set_facecolor(bg)
-        self.ax.set_facecolor(bg)
+        self.fig.patch.set_facecolor(self.bg)
+        self.ax.set_facecolor(self.bg)
 
         # подписи и оси
-        self.ax.tick_params(colors=text)
+        self.ax.tick_params(colors=self.text)
         for spine in self.ax.spines.values():
-            spine.set_color(text)
-        self.ax.xaxis.label.set_color(text)
-        self.ax.yaxis.label.set_color(text)
+            spine.set_color(self.text)
+        self.ax.xaxis.label.set_color(self.text)
+        self.ax.yaxis.label.set_color(self.text)
 
         # сетка
-        self.ax.grid(True, color=grid)
+        self.ax.grid(True, color=self.grid)
 
         # легенда
         legend = self.ax.get_legend()
         if legend:
-            legend.get_frame().set_facecolor(bg)
-            legend.get_frame().set_edgecolor(text)
+            legend.get_frame().set_facecolor(self.bg)
+            legend.get_frame().set_edgecolor(self.text)
             for t in legend.get_texts():
-                t.set_color(text)
+                t.set_color(self.text)
 
         # перерисовать Canvas
         self.draw()
@@ -49,41 +49,25 @@ class CDFPlot(MplCanvas):
 
         self.ax.clear()
 
-        # --- цвета из палитры приложения ---
-        palette = QApplication.instance().palette()
-        bg = palette.color(QPalette.Window).name()
-        text = palette.color(QPalette.WindowText).name()
-        grid = palette.color(QPalette.Mid).name()
-
-        self.fig.patch.set_facecolor(bg)
-        self.ax.set_facecolor(bg)
-
         # графики
         self.ax.step(values1, cdf1, where='post', label=label1)
         if values2 is not None and cdf2 is not None:
             self.ax.step(values2, cdf2, where='post', label=label2)
 
         # подписи и оси
-        self.ax.set_xlabel("k", color=text)
-        self.ax.set_ylabel("F(k)", color=text)
-        self.ax.tick_params(colors=text)
-        for spine in self.ax.spines.values():
-            spine.set_color(text)
+        self.ax.set_xlabel("k", color=self.text)
+        self.ax.set_ylabel("F(k)", color=self.text)
 
         # сетка
-        self.ax.grid(True, color=grid)
+        self.ax.grid(True)
 
         # KS линия
         if ks is not None and ksx is not None:
-            self.ax.axvline(ksx, color=text, linestyle="--",
+            self.ax.axvline(ksx, linestyle="--", color=self.text,
                             label=f"KS-distance = {ks:4f}")
 
         # легенда
-        legend = self.ax.legend()
-        if legend:
-            legend.get_frame().set_facecolor(bg)
-            legend.get_frame().set_edgecolor(text)
-            for t in legend.get_texts():
-                t.set_color(text)
+        if values2 is not None and cdf2 is not None:
+            self.ax.legend()
 
         self.draw()

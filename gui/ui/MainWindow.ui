@@ -44,6 +44,10 @@
   <property name="windowTitle">
    <string>Подбор параметров MAP-потока</string>
   </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../resources/icons/icon.ico</normaloff>../../resources/icons/icon.ico</iconset>
+  </property>
   <property name="dockOptions">
    <set>QMainWindow::DockOption::AllowTabbedDocks|QMainWindow::DockOption::AnimatedDocks</set>
   </property>
@@ -283,7 +287,7 @@ QPushButton:checked {
          <string notr="true"/>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>4</number>
         </property>
         <widget class="QWidget" name="startPage">
          <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -819,7 +823,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                 <string/>
                </property>
                <property name="placeholderText">
-                <string>Введите элементы матрицы Q без каких-либо разделителей, через пробел</string>
+                <string>Введите элементы матрицы Q без каких-либо знаковых разделителей, только через пробел</string>
                </property>
               </widget>
              </item>
@@ -850,7 +854,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                 <string/>
                </property>
                <property name="placeholderText">
-                <string>Введите элементы матрицы Λ без каких-либо разделителей, через пробел</string>
+                <string>Введите интенсивности располагая их друг под другом</string>
                </property>
               </widget>
              </item>
@@ -881,7 +885,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                 <string/>
                </property>
                <property name="placeholderText">
-                <string>Введите элементы матрицы D без каких-либо разделителей, через пробел</string>
+                <string>Введите элементы матрицы D без каких-либо знаковых разделителей, только через пробел</string>
                </property>
               </widget>
              </item>

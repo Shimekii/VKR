@@ -104,9 +104,9 @@ class ThemeService:
 
             if isinstance(widget, QComboBox):
                 if theme == "dark":
-                    icon_path = "url(:/arrow/icons/arrow_down_light.svg);"
+                    icon_path = "url(:/icons/arrow_down_light.svg);"
                 else:
-                    icon_path = "url(:/arrow/icons/arrow_down_dark.svg);"
+                    icon_path = "url(:/icons/arrow_down_dark.svg);"
                 widget.setStyleSheet(
                     COMBO_BOX.format(
                         bg_color=palette.color(QPalette.Base).name(),

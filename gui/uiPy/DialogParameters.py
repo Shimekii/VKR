@@ -23,14 +23,14 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         if not Dialog.objectName():
             Dialog.setObjectName(u"Dialog")
-        Dialog.resize(331, 350)
+        Dialog.resize(331, 379)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Dialog.sizePolicy().hasHeightForWidth())
         Dialog.setSizePolicy(sizePolicy)
         Dialog.setMinimumSize(QSize(331, 350))
-        Dialog.setMaximumSize(QSize(331, 350))
+        Dialog.setMaximumSize(QSize(331, 400))
         self.verticalLayout_2 = QVBoxLayout(Dialog)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.stackedWidget = QStackedWidget(Dialog)
@@ -215,7 +215,7 @@ class Ui_Dialog(object):
 
         self.stackedWidget.addWidget(self.pageSGD)
 
-        self.verticalLayout_2.addWidget(self.stackedWidget)
+        self.verticalLayout_2.addWidget(self.stackedWidget, 0, Qt.AlignmentFlag.AlignTop)
 
         self.lineWeights = QLineEdit(Dialog)
         self.lineWeights.setObjectName(u"lineWeights")
@@ -230,7 +230,7 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
 
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(Dialog)

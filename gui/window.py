@@ -1,16 +1,14 @@
-from PySide6.QtWidgets import QMainWindow, QFileDialog, QDialog, QMessageBox, QApplication
+from PySide6.QtWidgets import QMainWindow, QFileDialog, QDialog, QMessageBox, QPushButton
 from PySide6.QtCore import QTimer
 from gui.uiPy.MainWindow import Ui_MainWindow
 from gui.dialogs.dialogParameters import dialogParameters
 from gui.dialogs.dialogCompareWithTrace import dialogCompareTrace
 from gui.dialogs.dialogGradParams import gradParameters
 from gui.canvas import CDFPlot
-from core.analysis import analysis
-from core.map.MAP import MAP
 from multiprocessing import Process, Queue, Event
 from services.search_service import search_run
-from services.io_service import info_text, read_trace
-from services.io_service import parse_matrix
+from services.analysis_service import compareMapWithTrace, compareTraces, getCdfForTrace, getInfoForTrace, getRelativeErr
+from services.io_service import info_text, loadMap, read_trace, parse_matrix
 from services.simulation_service import start_generation_service
 from services.theme_service import ThemeService
 
@@ -84,14 +82,10 @@ class window(QMainWindow, Ui_MainWindow):
 
     # Переключение страниц
     def switch_page(self, button, page):
-        # сброс кнопок
-        for btn in [
-            self.btnPageTrace,
-            self.btnPageSearch,
-            self.btnPageGenerate,
-            self.btnPageCompare
-            ]:
-            btn.setChecked(False)
+        for obj in self.buttons.children():
+            if isinstance(obj, QPushButton):
+                obj.setChecked(False)
+
         button.setChecked(True)
         self.stackedWidget.setCurrentWidget(page)
 
@@ -112,12 +106,8 @@ class window(QMainWindow, Ui_MainWindow):
             trace1 = read_trace(self.file1)
             trace2 = read_trace(self.file2)
             t = self.spinTime.value()
-            counts1 = analysis.event_count_distribution(trace1, t)
-            counts2 = analysis.event_count_distribution(trace2, t)
-            v1, cdf1 = analysis.empirical_cdf(counts1)
-            v2, cdf2 = analysis.empirical_cdf(counts2)
-            ks, ksx = analysis.empirical_kolmogorov_distance(v1, cdf1, v2, cdf2)
-            self.cdf_plot_compare.plot(v1, cdf1, ks, ksx, v2, cdf2,)
+            resultCompare = compareTraces(trace1, trace2, t)
+            self.cdf_plot_compare.plot(*resultCompare)
         except Exception as e:
             QMessageBox.warning(
                 self,
@@ -130,14 +120,8 @@ class window(QMainWindow, Ui_MainWindow):
         if not self.originTraceIsLoaded:
             QMessageBox.warning(self, "Ошибка", "Прочитайте исходную трассу. Кнопка \"Чтение трассы\"")
             return
-        tmp_map = MAP(self.tmp_Q, self.tmp_L, self.tmp_D, self.spinSize.value())
-        n_max = max(self.counts) + 5
-        probs = tmp_map.event_count_distribution(n_max, t=5)
-        cdf_theory = analysis.np.cumsum(probs)
-        values_theory = analysis.np.arange(len(cdf_theory))
-        values_emp, cdf_emp = analysis.empirical_cdf(self.counts)
-        ks, ksx = analysis.empirical_kolmogorov_distance(values_emp, cdf_emp, values_theory, cdf_theory)
-        self._dialogView = dialogCompareTrace(values_emp, cdf_emp, values_theory, cdf_theory, ks, ksx, label1='Трасса', label2='MAP-поток')
+        resultCompare = compareMapWithTrace((self.Q, self.Lambda, self.D), self.counts)
+        self._dialogView = dialogCompareTrace(*resultCompare, label1='Трасса', label2='MAP-поток')
         self._dialogView.exec()
         self._dialogView = None
 
@@ -164,7 +148,11 @@ class window(QMainWindow, Ui_MainWindow):
             self, "Выбор файла", "", "Текстовые файлы (*.txt)"
         )
         if file_path:
-            m = MAP(name=file_path)
+            try:
+                m = loadMap(file_path)
+            except Exception as e:
+                QMessageBox.critical(self, "Ошибка чтения", f"{e} Проверьте файл с параметрами")
+                return
             self.spinSizeMap.setValue(m.size)
             for i in range(m.size):
                 for j in range(m.size):
@@ -182,19 +170,16 @@ class window(QMainWindow, Ui_MainWindow):
         if file_path:
             try:
                 data = read_trace(file_path)
+                self.characteristics = getInfoForTrace(data)
             except Exception as e:
                 QMessageBox.critical(self, "Критическая ошибка", f"Ошибка чтения файла: {e}")
-            try:
-                self.characteristics = analysis.analysis(data)
-            except Exception as e:
-                QMessageBox.critical(self, "Критическая ошибка", "Ошибка чтения файла:\n" + e)
-            else:
-                self.textEdit.setText(info_text(len(data), self.characteristics))
-                self.counts = analysis.event_count_distribution(data, 5)
-                v, cdf = analysis.empirical_cdf(self.counts)
-                self.cdf_plot_read_trace.plot(v, cdf, label1=None)
-                self.originTraceIsLoaded = True
-                del data
+                return 
+
+            self.textEdit.setText(info_text(len(data), self.characteristics))
+            self.counts, v, cdf = getCdfForTrace(data)
+            self.cdf_plot_read_trace.plot(v, cdf, label1=None)
+            self.originTraceIsLoaded = True
+            del data
     
     # сохранение трассы в файл
     def _save_trace_to_file(self):
@@ -213,16 +198,13 @@ class window(QMainWindow, Ui_MainWindow):
         )
         if file_path:
             with open(file_path, 'w') as f:
-                f.write(f"{len(self.tmp_Q)}\n")
-                for row in self.tmp_Q:
+                f.write(f"{len(self.Q)}\n")
+                for row in self.Q:
                     f.write(" ".join(f'{x:4f}' for x in row) + '\n')
-                for i in range(len(self.tmp_L)):
-                    f.write(f'{self.tmp_L[i][i]:4f}\n')
-                for row in self.tmp_D:
+                for i in range(len(self.Lambda)):
+                    f.write(f'{self.Lambda[i][i]:4f}\n')
+                for row in self.D:
                     f.write(" ".join(f'{x:4f}' for x in row) + '\n')
-            del self.tmp_Q
-            del self.tmp_L
-            del self.tmp_D
 
 
     def _show_matrix(self, Q, Lambda, D):
@@ -243,9 +225,9 @@ class window(QMainWindow, Ui_MainWindow):
             self.textHistory.clear()
             size = self.spinSizeMap.value()
             try:
-                q = analysis.np.array(parse_matrix(self.matrixQ.toPlainText(), "Q"))
-                l = analysis.np.array(parse_matrix(self.matrixL.toPlainText(), "Λ"))
-                d = analysis.np.array(parse_matrix(self.matrixD.toPlainText(), "D"))
+                q = parse_matrix(self.matrixQ.toPlainText(), "Q")
+                l = parse_matrix(self.matrixL.toPlainText(), "Λ")
+                d = parse_matrix(self.matrixD.toPlainText(), "D")
                 if size != len(q) or size != len(l) or size != len(d):
                     QMessageBox.warning(self, "Ошибка", "Размеры матриц не совпадают. Проверьте входные данные")
                     return
@@ -257,26 +239,31 @@ class window(QMainWindow, Ui_MainWindow):
             self.processStarted = True
 
             self.stop_event.clear()
-            self.process, self.queue = start_generation_service(q, l, d, size, total_events, self.stop_event)
+            self.process, self.queue = start_generation_service(q, l, d, total_events, self.stop_event)
             self.timer = QTimer()
             self.timer.timeout.connect(self.updateBar)
             self.timer.start(100)
         else:
             self.processStarted = False
             self.cancel_generation()
+            self.timer.stop()
             self.btnGenerate.setText("Сгенерировать")
 
     # функция остановки генерации
     def cancel_generation(self):
         if self.process and self.process.is_alive():
+            self.processStarted = False
+            # отправляем сигнал о завершении работы
             self.stop_event.set()
-
+            # ждем завершения
             self.process.join(timeout=1)
 
+            # если процесс не завершился, то принудительно завершаем
             if self.process.is_alive():
                 self.process.terminate()
                 self.process.join()
         self.timer.stop()
+        del self.timer
 
 
     # обновление прогресс-бара в генераторе событий
@@ -285,7 +272,6 @@ class window(QMainWindow, Ui_MainWindow):
         last_progress = None
 
         while not self.queue.empty():
-
             msg = self.queue.get()
             if msg[0] == 'batch':
                 values, count = msg[1], msg[2]
@@ -304,6 +290,8 @@ class window(QMainWindow, Ui_MainWindow):
         if last_progress == self.progressGenerate.maximum():
             self.btnGenerate.setText("Сгенерировать")
             self.processStarted = False
+            self.timer.stop()
+            del self.timer
 
 
     # запуск поиска
@@ -311,7 +299,7 @@ class window(QMainWindow, Ui_MainWindow):
         if not self.processStarted:
             self.processStarted = True
             self.btnStartSearch.setText("Отмена")
-            self.queue = Queue()
+            # собираем параметры
             args = (
                 self.spinSize.value(),
                 self.spinMean.value(),
@@ -323,17 +311,16 @@ class window(QMainWindow, Ui_MainWindow):
                 self.extra_params,
                 self.gradParams
             )
-
+            self.queue = Queue()
+            # создаем процесс
             self.process = Process(
                 target=_run_search_process,
                 args=(args, self.queue)
             )
-
+            # запускам процесс
             self.process.start()
             self.processTimer.start(100)
-
             self.progressSearch.setMaximum(0)
-            self.progressTimer = QTimer(self)
         else:
             self.process.terminate()
             self.progressSearch.setMaximum(1)
@@ -346,27 +333,22 @@ class window(QMainWindow, Ui_MainWindow):
 
     # открывает диалоговое окно с доп.параметрами
     def _open_dialog(self):
-        methods = {
-            "Последовательный перебор": 0,
-            "Перебор в окрестности": 1,
-            "Градиентный спуск": 2
-        }
         if self._dialogParams is None:
-            self._dialogParams = dialogParameters(start_page=methods[self.selected_method], parent=self)
+            self._dialogParams = dialogParameters(start_page=self.comboSelectAlg.currentIndex(), parent=self)
+            
         if self._dialogParams.exec() == QDialog.Accepted:
             self.extra_params = self._dialogParams.get_parameters()
-            self.weights = self.extra_params['weights'] if not None else [1, 1, 1, 1]
 
     # Обновление результатов поиска параметров
     def checkProcess(self):
         if not self.queue.empty():
-            Q, Lambda, D, R, characteristics, loss = self.queue.get()
+            self.Q, self.Lambda, self.D, R, characteristics, loss = self.queue.get()
             self.process.join()
             self.processTimer.stop()
             self.progressSearch.setMaximum(1)
             self.progressSearch.setValue(1)
 
-            self._show_matrix(Q, Lambda, D)
+            self._show_matrix(self.Q, self.Lambda, self.D)
             self.textInfoSearch.setText(
                 INFO_TEMPLATE.format(
                     mean=characteristics[0],
@@ -375,17 +357,17 @@ class window(QMainWindow, Ui_MainWindow):
                     corr=characteristics[3],
                     skew=characteristics[4],
                     kurt=characteristics[5],
-                    cvPer=analysis.relativeErr(self.spinCV.value(), characteristics[2]),
-                    corrPer=analysis.relativeErr(self.spinCorr.value(), characteristics[3]),
-                    skewPer=analysis.relativeErr(self.spinSkew.value(), characteristics[4]),
-                    kurtPer=analysis.relativeErr(self.spinKurt.value(), characteristics[5]),
+                    cvPer=getRelativeErr(self.spinCV.value(), characteristics[2]),
+                    corrPer=getRelativeErr(self.spinCorr.value(), characteristics[3]),
+                    skewPer=getRelativeErr(self.spinSkew.value(), characteristics[4]),
+                    kurtPer=getRelativeErr(self.spinKurt.value(), characteristics[5]),
                     R=R.round(4),
                     loss=loss
                 )
             )
-            self.tmp_Q = Q
-            self.tmp_L = Lambda
-            self.tmp_D = D
+            # self.tmp_Q = Q
+            # self.tmp_L = Lambda
+            # self.tmp_D = D
             self.btnStartSearch.setText("Подобрать MAP-поток")
             self.processStarted = False
 
