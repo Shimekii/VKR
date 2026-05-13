@@ -306,7 +306,6 @@ class Ui_MainWindow(object):
         self.comboSelectAlg = QComboBox(self.groupBox)
         self.comboSelectAlg.addItem("")
         self.comboSelectAlg.addItem("")
-        self.comboSelectAlg.addItem("")
         self.comboSelectAlg.setObjectName(u"comboSelectAlg")
 
         self.verticalLayout_3.addWidget(self.comboSelectAlg)
@@ -667,7 +666,7 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         self.btnPageSearch.setDefault(False)
-        self.stackedWidget.setCurrentIndex(4)
+        self.stackedWidget.setCurrentIndex(2)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -723,7 +722,6 @@ class Ui_MainWindow(object):
         self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"\u041f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u044b", None))
         self.comboSelectAlg.setItemText(0, QCoreApplication.translate("MainWindow", u"\u041f\u043e\u0441\u043b\u0435\u0434\u043e\u0432\u0430\u0442\u0435\u043b\u044c\u043d\u044b\u0439 \u043f\u0435\u0440\u0435\u0431\u043e\u0440", None))
         self.comboSelectAlg.setItemText(1, QCoreApplication.translate("MainWindow", u"\u041f\u0435\u0440\u0435\u0431\u043e\u0440 \u0432 \u043e\u043a\u0440\u0435\u0441\u0442\u043d\u043e\u0441\u0442\u0438", None))
-        self.comboSelectAlg.setItemText(2, QCoreApplication.translate("MainWindow", u"\u0413\u0440\u0430\u0434\u0438\u0435\u043d\u0442\u043d\u044b\u0439 \u0441\u043f\u0443\u0441\u043a", None))
 
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"\u0420\u0430\u0437\u043c\u0435\u0440\u043d\u043e\u0441\u0442\u044c", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"\u0421\u0440\u0435\u0434\u043d\u0435\u0435", None))

@@ -1,4 +1,3 @@
-from core.optimization import SGD
 from core.optimization.GradDescent import Gradient
 from core.analysis import analysis
 from core.search import algorithms

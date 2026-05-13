@@ -161,59 +161,6 @@ class Ui_Dialog(object):
         self.verticalLayout_3.addWidget(self.checkEnhanced)
 
         self.stackedWidget.addWidget(self.pageLocalSearch)
-        self.pageSGD = QWidget()
-        self.pageSGD.setObjectName(u"pageSGD")
-        self.verticalLayout_4 = QVBoxLayout(self.pageSGD)
-        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.label_10 = QLabel(self.pageSGD)
-        self.label_10.setObjectName(u"label_10")
-        self.label_10.setMaximumSize(QSize(16777215, 40))
-        self.label_10.setFont(font)
-        self.label_10.setTextFormat(Qt.TextFormat.AutoText)
-        self.label_10.setScaledContents(False)
-        self.label_10.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.label_10.setWordWrap(True)
-
-        self.verticalLayout_4.addWidget(self.label_10)
-
-        self.label_11 = QLabel(self.pageSGD)
-        self.label_11.setObjectName(u"label_11")
-        self.label_11.setMaximumSize(QSize(16777215, 20))
-
-        self.verticalLayout_4.addWidget(self.label_11)
-
-        self.lineEpsilon = QLineEdit(self.pageSGD)
-        self.lineEpsilon.setObjectName(u"lineEpsilon")
-
-        self.verticalLayout_4.addWidget(self.lineEpsilon)
-
-        self.label_12 = QLabel(self.pageSGD)
-        self.label_12.setObjectName(u"label_12")
-        self.label_12.setMaximumSize(QSize(16777215, 20))
-
-        self.verticalLayout_4.addWidget(self.label_12)
-
-        self.spinLR = QDoubleSpinBox(self.pageSGD)
-        self.spinLR.setObjectName(u"spinLR")
-        self.spinLR.setDecimals(4)
-        self.spinLR.setValue(0.050000000000000)
-
-        self.verticalLayout_4.addWidget(self.spinLR)
-
-        self.label_13 = QLabel(self.pageSGD)
-        self.label_13.setObjectName(u"label_13")
-        self.label_13.setMaximumSize(QSize(16777215, 20))
-
-        self.verticalLayout_4.addWidget(self.label_13)
-
-        self.spinPatience = QSpinBox(self.pageSGD)
-        self.spinPatience.setObjectName(u"spinPatience")
-        self.spinPatience.setMaximum(999999)
-        self.spinPatience.setValue(500)
-
-        self.verticalLayout_4.addWidget(self.spinPatience)
-
-        self.stackedWidget.addWidget(self.pageSGD)
 
         self.verticalLayout_2.addWidget(self.stackedWidget, 0, Qt.AlignmentFlag.AlignTop)
 
@@ -251,11 +198,6 @@ class Ui_Dialog(object):
 #endif // QT_CONFIG(accessibility)
         self.label_9.setText(QCoreApplication.translate("Dialog", u"\u041e\u043a\u0440\u0435\u0441\u0442\u043d\u043e\u0441\u0442\u044c", None))
         self.checkEnhanced.setText(QCoreApplication.translate("Dialog", u"\u0423\u043b\u0443\u0447\u0448\u0435\u043d\u043d\u044b\u0439 \u043f\u043e\u0438\u0441\u043a", None))
-        self.label_10.setText(QCoreApplication.translate("Dialog", u"\u0414\u043e\u043f\u043e\u043b\u043d\u0438\u0442\u0435\u043b\u044c\u043d\u044b\u0435 \u043f\u0430\u0440\u0430\u043c\u0435\u0442\u0440\u044b \u0434\u043b\u044f \u0433\u0440\u0430\u0434\u0438\u0435\u043d\u0442\u043d\u043e\u0433\u043e \u0441\u043f\u0443\u0441\u043a\u0430", None))
-        self.label_11.setText(QCoreApplication.translate("Dialog", u"\u0422\u043e\u0447\u043d\u043e\u0441\u0442\u044c", None))
-        self.lineEpsilon.setText(QCoreApplication.translate("Dialog", u"1e-7", None))
-        self.label_12.setText(QCoreApplication.translate("Dialog", u"Learning rate", None))
-        self.label_13.setText(QCoreApplication.translate("Dialog", u"\u0423\u0441\u043b\u043e\u0432\u0438\u0435 \u0440\u0430\u043d\u043d\u0435\u0439 \u043e\u0441\u0442\u0430\u043d\u043e\u0432\u043a\u0438", None))
         self.lineWeights.setText("")
         self.lineWeights.setPlaceholderText(QCoreApplication.translate("Dialog", u"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0432\u0435\u0441\u0430 \u0434\u043b\u044f \u0444\u0443\u043d\u043a\u0446\u0438\u0438 \u043f\u043e\u0442\u0435\u0440\u044c. \u041f\u0440\u0438\u043c\u0435\u0440 1,1,1,1", None))
         self.btnSaveParameters.setText(QCoreApplication.translate("Dialog", u"\u0421\u041e\u0425\u0420\u0410\u041d\u0418\u0422\u042c", None))

@@ -287,7 +287,7 @@ QPushButton:checked {
          <string notr="true"/>
         </property>
         <property name="currentIndex">
-         <number>4</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="startPage">
          <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -477,11 +477,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
                <item>
                 <property name="text">
                  <string>Перебор в окрестности</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Градиентный спуск</string>
                 </property>
                </item>
               </widget>

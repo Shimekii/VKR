@@ -1,5 +1,4 @@
 numpy
 pyside6
-torch
 scipy
 matplotlib
