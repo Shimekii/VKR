@@ -32,10 +32,13 @@ def GenD(size):
     return matrix
 
 # Генерация случайных параметров
-def generateRandomParameters(size, rQ = 10, rLamb = 10):
+def generateRandomParameters(size, rQ = 10, rLamb = 10, mmpp=False):
     Q = GenQ(size, rQ)
     Lambda = GenL(size, rLamb)
-    D = GenD(size)
+    if not mmpp:
+        D = GenD(size)
+    else:
+        D = np.zeros((size,size))
     return Q, Lambda, D
 
 # Функция ошибки
@@ -92,17 +95,17 @@ def fit(individual, cvTarget, corrTarget, skewnessTarget = None, kurtosisTarget 
 
 
 # Функция для генерации pop_size MAP-потоков со случайными параметрами
-def initialize_population(pop_size, size, rQ, rLamb):
+def initialize_population(pop_size, size, rQ, rLamb, mmpp=False):
     population = []
     for _ in range(pop_size):
-        Q, Lambda, D = generateRandomParameters(size, rQ, rLamb)
+        Q, Lambda, D = generateRandomParameters(size, rQ, rLamb, mmpp)
         population.append([Q,Lambda,D])
     return population
 
 """_____________________________________________________________________________________"""
 
 # Алгоритм с последовательным перебором параметров
-def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=1, rLamb=10, skewnessTarget = None, kurtosisTarget = None, weights = None):
+def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=1, rLamb=10, skewnessTarget = None, kurtosisTarget = None, weights = None, mmpp=False):
     """
         pop_size - кол-во генерируемых МАР-потоков для поиска начального решения\n
         sizeMap - размер MAP-потока\n
@@ -125,7 +128,7 @@ def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=1, rLamb=1
     maxIter = 5000
     #print("Pop")
     while best_fitness > 0.0001 and iter < 1000:
-        population = initialize_population(pop_size, sizeMap, rQ, rLamb)
+        population = initialize_population(pop_size, sizeMap, rQ, rLamb, mmpp)
         fitness_values = [fit(individual, cvTarget, corrTarget, skewnessTarget, kurtosisTarget, weights) for individual in population]
         current_best_fitness = min(fitness_values)
         if current_best_fitness < best_fitness:
@@ -186,15 +189,16 @@ def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=1, rLamb=1
     pop = copy.deepcopy(best)
 
     #print("\nПоиск D")
-    while (eps / 10) < Fit and iter < maxIter:
-        D = GenD(sizeMap)
-        pop[2] = D
-        Fit = fit(pop, cvTarget, corrTarget, skewnessTarget, kurtosisTarget, weights)
-        if Fit < best_fitness:
-            best_fitness = Fit
-            best = copy.deepcopy(pop)
-        iter += 1
-        #print(f"\rИтерация: {iter}, Fit: {Fit}", end="")
+    if not mmpp:
+        while (eps / 10) < Fit and iter < maxIter:
+            D = GenD(sizeMap)
+            pop[2] = D
+            Fit = fit(pop, cvTarget, corrTarget, skewnessTarget, kurtosisTarget, weights)
+            if Fit < best_fitness:
+                best_fitness = Fit
+                best = copy.deepcopy(pop)
+            iter += 1
+            #print(f"\rИтерация: {iter}, Fit: {Fit}", end="")
 
     # mean, var, cvE, corrE, skewnessE, kurtosisE  = analysisModule.characteristics(best[0], best[1], best[2])
     #print(f"\nНайденная вариация: {cvE}")
@@ -210,7 +214,7 @@ def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=1, rLamb=1
 # Алгоритм с перебором параметров MAP-потока в заданной окрестности
 
 
-def local_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=1, rLamb=10, percent = 0.02, skewnessTarget = None, kurtosisTarget = None, enhanced = False, weights = None):
+def local_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=1, rLamb=10, percent = 0.02, skewnessTarget = None, kurtosisTarget = None, enhanced = False, weights = None, mmpp=False):
     """
     pop_size - кол-во генерируемых МАР-потоков для поиска начального решения\n
     sizeMap - размерность MAP-потока\n
@@ -225,7 +229,7 @@ def local_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=1, rLamb=10, per
     точность изменяется динамически от последнего найденного решения
     """
     # Ищем начальное решение
-    map, Fit = initialGuess(pop_size, sizeMap, cvTarget, corrTarget, rQ, rLamb, skewnessTarget, kurtosisTarget)
+    map, Fit = initialGuess(pop_size, sizeMap, cvTarget, corrTarget, rQ, rLamb, skewnessTarget, kurtosisTarget, mmpp)
     #eps = 10 ** (math.floor(math.log10(abs(Fit))) + 1)  # Извлекаем точность
     if not math.isfinite(Fit) or Fit == 0:
         eps = 1e-6  
@@ -252,15 +256,16 @@ def local_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=1, rLamb=10, per
     iter = 0
     # Отдельный поиск подбор D для заданного eps / 10
     #print("D")
-    while (eps / 10) < Fit and iter <= 5000:
-        D = GenD(sizeMap)
-        Fit = fit([Q, Lambda, D], cvTarget, corrTarget, skewnessTarget, kurtosisTarget, weights)
-        if Fit < best_fitness:
-            best_fitness = Fit
-            best = Q, Lambda, D
-        iter += 1
-        #print(f"\rИтерация: {iter}, Fit: {Fit}", end="")
-    #print("\n", analysisModule.characteristics(best[0], best[1], best[2]))
+    if not mmpp:
+        while (eps / 10) < Fit and iter <= 5000:
+            D = GenD(sizeMap)
+            Fit = fit([Q, Lambda, D], cvTarget, corrTarget, skewnessTarget, kurtosisTarget, weights)
+            if Fit < best_fitness:
+                best_fitness = Fit
+                best = Q, Lambda, D
+            iter += 1
+            #print(f"\rИтерация: {iter}, Fit: {Fit}", end="")
+        #print("\n", analysisModule.characteristics(best[0], best[1], best[2]))
     print(f"best fit: {best_fitness}")
     return best, best_fitness
 
@@ -305,14 +310,14 @@ def distric(map, percent, eps, cv, corr, skewness, kurtosis, weights):      # и
     return bestMap
 
 # Поиск начального решения с перегенерацией всех параметров
-def initialGuess(pop_size, sizeMap, cvEmp, corrEmp, rQ, rLamb, skewness, kurtosis):
+def initialGuess(pop_size, sizeMap, cvEmp, corrEmp, rQ, rLamb, skewness, kurtosis, mmpp=False):
     best_fitness = float('inf')
     pop = None  # Для хранения лучшего индивида
     iter = 0
     over = False
     #print("\nguess")
     while best_fitness > 0.0001 and iter < 1000:
-        population = initialize_population(pop_size, sizeMap, rQ, rLamb)
+        population = initialize_population(pop_size, sizeMap, rQ, rLamb, mmpp)
         fitness_values = [fit(individual, cvEmp, corrEmp, skewness, kurtosis) for individual in population]
         current_best_fitness = min(fitness_values)
         if current_best_fitness < best_fitness:

@@ -47,7 +47,7 @@
       </size>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="pageBruteForce">
       <layout class="QVBoxLayout" name="verticalLayout">
@@ -264,6 +264,13 @@
      </property>
      <property name="placeholderText">
       <string>Введите веса для функции потерь. Пример 1,1,1,1</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="checkMmpp">
+     <property name="text">
+      <string>Использовать для MMPP</string>
      </property>
     </widget>
    </item>

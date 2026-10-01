@@ -19,7 +19,7 @@ def search_run(args):
     use = grad_params[1]        # флаг использования
     # если порог не перепрынут и стоит галочка на использование, то используем градиентный спуск
     if grad_params[1] is not None and threshold < loss and use:
-        grad = Gradient([Q, Lambda, D], [cv, corr, skew, kurt], **grad_params[2])
+        grad = Gradient([Q, Lambda, D], [cv, corr, skew, kurt], **grad_params[2], mmpp=extra_params['mmpp'])
         (Q, Lambda, D), loss = grad.search()
 
     Q, Lambda, D = algorithms.meanMap([Q, Lambda, D], mean)

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'DialogParameters.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.10.1
+## Created by: Qt User Interface Compiler version 6.11.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -169,6 +169,11 @@ class Ui_Dialog(object):
 
         self.verticalLayout_2.addWidget(self.lineWeights)
 
+        self.checkMmpp = QCheckBox(Dialog)
+        self.checkMmpp.setObjectName(u"checkMmpp")
+
+        self.verticalLayout_2.addWidget(self.checkMmpp)
+
         self.btnSaveParameters = QPushButton(Dialog)
         self.btnSaveParameters.setObjectName(u"btnSaveParameters")
 
@@ -177,7 +182,7 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
 
-        self.stackedWidget.setCurrentIndex(1)
+        self.stackedWidget.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(Dialog)
@@ -200,6 +205,7 @@ class Ui_Dialog(object):
         self.checkEnhanced.setText(QCoreApplication.translate("Dialog", u"\u0423\u043b\u0443\u0447\u0448\u0435\u043d\u043d\u044b\u0439 \u043f\u043e\u0438\u0441\u043a", None))
         self.lineWeights.setText("")
         self.lineWeights.setPlaceholderText(QCoreApplication.translate("Dialog", u"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0432\u0435\u0441\u0430 \u0434\u043b\u044f \u0444\u0443\u043d\u043a\u0446\u0438\u0438 \u043f\u043e\u0442\u0435\u0440\u044c. \u041f\u0440\u0438\u043c\u0435\u0440 1,1,1,1", None))
+        self.checkMmpp.setText(QCoreApplication.translate("Dialog", u"\u0418\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u044c \u0434\u043b\u044f MMPP", None))
         self.btnSaveParameters.setText(QCoreApplication.translate("Dialog", u"\u0421\u041e\u0425\u0420\u0410\u041d\u0418\u0422\u042c", None))
     # retranslateUi
 

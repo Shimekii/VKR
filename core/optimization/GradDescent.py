@@ -3,7 +3,7 @@ import numpy as np
 
 class Gradient:
 
-    def __init__(self, init_matricies, targets, lr=0.05, max_iter=1e4, eps=1e-7, patience=250):
+    def __init__(self, init_matricies, targets, lr=0.05, max_iter=1e4, eps=1e-7, patience=250, mmpp=False):
         self.init_matricies = init_matricies
         self.targets = targets
         self.size = len(init_matricies[0])
@@ -11,6 +11,7 @@ class Gradient:
         self.max_iter = max_iter
         self.eps = eps
         self.patience = patience
+        self.mmpp = mmpp
 
     def matrix_to_vector(self):
         """Преобразует матрицы в векторы параметров"""
@@ -29,15 +30,18 @@ class Gradient:
         Lambda_vec = np.zeros(self.size)
         for i in range(self.size):
             Lambda_vec[i] = Lambda[i][i]
-        
+
         # D: все недиагональные элементы
-        idx = 0
-        D_vec = np.zeros(self.size ** 2 - self.size)
-        for i in range(self.size):
-            for j in range(self.size):
-                if i != j:
-                    D_vec[idx] = D[i][j]
-                    idx+=1
+        if self.mmpp:
+            D_vec = np.zeros(self.size ** 2 - self.size)
+        else:
+            idx = 0
+            D_vec = np.zeros(self.size ** 2 - self.size)
+            for i in range(self.size):
+                for j in range(self.size):
+                    if i != j:
+                        D_vec[idx] = D[i][j]
+                        idx+=1
         
         return Q_vec, Lambda_vec, D_vec
 
@@ -61,12 +65,13 @@ class Gradient:
         
         # D: собираем матрицу из недиагональных элементов
         D = np.zeros((self.size, self.size))
-        idx = 0
-        for i in range(self.size):
-            for j in range(self.size):
-                if i != j:
-                    D[i][j] = np.clip(D_vec[idx], 0, 1)
-                    idx += 1
+        if not self.mmpp:
+            idx = 0
+            for i in range(self.size):
+                for j in range(self.size):
+                    if i != j:
+                        D[i][j] = np.clip(D_vec[idx], 0, 1)
+                        idx += 1
         
         return Q, Lambda, D
 
@@ -78,8 +83,9 @@ class Gradient:
             params.append(q_vec[i])
         for i in range(len(l_vec)):
             params.append(l_vec[i])
-        for i in range(len(d_vec)):
-            params.append(d_vec[i])
+        if not self.mmpp:
+            for i in range(len(d_vec)):
+                params.append(d_vec[i])
 
         return np.array(params)
 
@@ -96,9 +102,12 @@ class Gradient:
             l_vec.append(params[idx])
             idx+=1
 
-        for _ in range(self.size**2 - self.size):
-            d_vec.append(params[idx])
-            idx+=1
+        if not self.mmpp:
+            for _ in range(self.size**2 - self.size):
+                d_vec.append(params[idx])
+                idx+=1
+        else:
+            d_vec = np.zeros(self.size*2 - self.size)
 
         q_vec = np.array(q_vec)
         l_vec = np.array(l_vec)

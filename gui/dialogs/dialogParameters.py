@@ -18,7 +18,8 @@ class dialogParameters(QDialog, Ui_Dialog):
                 'pop_size': self.spinBruteSize.value(),
                 'rQ': self.spinBruteQ.value(),
                 'rLamb': self.spinBruteL.value(),
-                'weights': self.parse_weights()
+                'weights': self.parse_weights(),
+                'mmpp': self.checkMmpp.isChecked()
             }
         if self.stackedWidget.currentIndex() == 1:
             return {
@@ -27,7 +28,8 @@ class dialogParameters(QDialog, Ui_Dialog):
                 'rLamb': self.spinLocalL.value(),
                 'percent': self.spinPercent.value(),
                 'enhanced': self.checkEnhanced.isChecked(),
-                'weights': self.parse_weights()
+                'weights': self.parse_weights(),
+                'mmpp': self.checkMmpp.isChecked()
             }
         if self.stackedWidget.currentIndex() == 2:
             try:
@@ -38,7 +40,8 @@ class dialogParameters(QDialog, Ui_Dialog):
                 'lr': self.spinLR.value(),
                 'eps': eps,
                 'patience': self.spinPatience.value(),
-                'weights': self.parse_weights()
+                'weights': self.parse_weights(),
+                'mmpp': self.checkMmpp.isChecked()
             }
     def parse_weights(self):
         text = self.lineWeights.text().strip()
