@@ -118,7 +118,6 @@ def brute_force_search(sizeMap, cvTarget, corrTarget, pop_size=30, rQ=1, rLamb=1
         weights - веса для функции потерь\n
         точность изменяется динамически от последнего найденного решения
     """
-    f = open("logSearch.txt", "a")
     best = []
     iter = 0
     Fit = 100
